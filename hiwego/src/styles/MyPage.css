@@ -1,0 +1,262 @@
+/* 마이페이지 스타일 */
+
+.mypage-container {
+  min-height: calc(100vh - 90px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.mypage-box {
+  background-color: #fff;
+  border: 3px solid #0099cc;
+  border-radius: 12px;
+  padding: 50px 40px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.mypage-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #0099cc;
+  margin: 0 0 40px 0;
+  letter-spacing: -0.5px;
+}
+
+/* ===== 프로필 조회 모드 ===== */
+.profile-view {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-item {
+  padding: 16px;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+.profile-item label {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-item p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-button {
+  padding: 14px 20px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  font-family: inherit;
+}
+
+.edit-button {
+  background-color: #b9d0ff;
+  border-color: #a8c5ff;
+  color: #333;
+}
+
+.edit-button:hover {
+  background-color: #a8c5ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(168, 197, 255, 0.4);
+}
+
+.logout-button {
+  background-color: #fff;
+  border-color: #ddd;
+  color: #666;
+}
+
+.logout-button:hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+
+.delete-button {
+  background-color: #fff;
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.delete-button:hover {
+  background-color: #fff5f5;
+  border-color: #ff5252;
+}
+
+/* ===== 프로필 편집 모드 ===== */
+.profile-edit {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.edit-input {
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.edit-input:focus {
+  border-color: #0099cc;
+  box-shadow: 0 0 8px rgba(0, 153, 204, 0.2);
+}
+
+.edit-input::placeholder {
+  color: #aaa;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.save-button,
+.cancel-button {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.save-button {
+  background-color: #b9d0ff;
+  color: #333;
+  border: 2px solid #a8c5ff;
+}
+
+.save-button:hover {
+  background-color: #a8c5ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(168, 197, 255, 0.4);
+}
+
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #666;
+  border: 2px solid #ddd;
+}
+
+.cancel-button:hover {
+  background-color: #eee;
+  border-color: #ccc;
+}
+
+/* ===== 반응형 디자인 ===== */
+@media (max-width: 480px) {
+  .mypage-container {
+    min-height: calc(100vh - 90px);
+    padding: 20px 16px;
+  }
+
+  .mypage-box {
+    padding: 40px 24px;
+    border-width: 2px;
+  }
+
+  .mypage-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .profile-section {
+    gap: 16px;
+  }
+
+  .profile-item {
+    padding: 14px;
+  }
+
+  .profile-item label {
+    font-size: 11px;
+  }
+
+  .profile-item p {
+    font-size: 15px;
+  }
+
+  .action-button {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .edit-form {
+    gap: 16px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .edit-input {
+    padding: 11px 12px;
+    font-size: 13px;
+  }
+
+  .save-button,
+  .cancel-button {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
