@@ -1,14 +1,13 @@
-// src/App.jsx (수정)
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import RegionPage from './pages/RegionPage';
-// ✨ 누락된 RegionDetailPage import 추가
 import RegionDetailPage from './pages/RegionDetailPage'; 
-
 import ThemePage from './pages/ThemePage';
 import ThemeDetailPage from './pages/ThemeDetailPage'; 
 import DetailPage from './pages/DetailPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import MyPage from './pages/MyPage';
 
 function App() {
   return (
@@ -25,7 +24,12 @@ function App() {
         <Route path="/theme/:themeName" element={<ThemeDetailPage />} /> 
 
         {/* 상세 페이지 라우트 */}
-        <Route path="/detail/:id" element={<DetailPage />} /> 
+        <Route path="/detail/:id" element={<DetailPage />} />
+        
+        {/* 인증 라우트 */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/mypage" element={<MyPage />} />
         
       </Routes>
     </BrowserRouter>
