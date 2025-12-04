@@ -1,101 +1,124 @@
-// src/pages/HomePage.jsx (최종 정리 및 오류 제거)
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
-// 임시로 SearchContainer 대신 기본 UI를 사용합니다.
-// 10단계에서 SearchContainer를 다시 연결할 예정입니다.
-// import SearchContainer from '../components/Search/SearchContainer'; 
+import '../styles/HomePage.css';
 
 const HomePage = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // 추천 여행지 데이터 (실제로는 API에서 가져올 수 있음)
+  const recommendations = [
+    {
+      id: 1,
+      name: '산 위의 성',
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+      region: '겨울'
+    },
+    {
+      id: 2,
+      name: '야경 도시',
+      image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop',
+      region: '야경'
+    },
+    {
+      id: 3,
+      name: '눈 덮인 집',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop',
+      region: '겨울'
+    }
+  ];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % recommendations.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + recommendations.length) % recommendations.length);
+  };
+
   return (
     <Layout>
       <div className="home-container">
-        {/* 1. 메인 배너 영역 */}
-        <section style={{ 
-          background: '#f8f8f8', 
-          padding: '80px 0', 
-          textAlign: 'center' 
-        }}>
-          {/* ✨ 모든 [cite_start]및 텍스트 완전히 제거 */}
-          <h2>Here we go!</h2> 
-          <p>가보고 싶은 추천 여행지</p>
+        {/* 1. 네비게이션 (헤더는 Layout에서 처리) */}
+        
+        {/* 2. 메인 배너 섹션 - 큰 히어로 배너 */}
+        <section className="main-banner">
+          <div className="banner-content">
+            <div className="banner-text">
+              <h1 className="banner-title">Here we go!</h1>
+              <p className="banner-subtitle">가보고 싶은 추천 여행지</p>
+              
+              {/* 검색 바 */}
+              <div className="search-bar">
+                <input 
+                  type="text" 
+                  placeholder="추천 여행지를 찾아보세요"
+                  className="search-input"
+                />
+                <button className="search-button">
+                  🔍
+                </button>
+              </div>
+            </div>
+
+            {/* 배너 이미지 */}
+            <div className="banner-image">
+              <img 
+                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" 
+                alt="산 풍경"
+                className="hero-image"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* 3. 추천 여행지 카루셀 섹션 */}
+        <section className="recommendations-section">
+          <h2 className="section-title">가보고 싶은 추천 여행지</h2>
           
-          {/* 2. 검색 영역 (디자인 적용) */}
-          <div style={{ margin: '20px auto', width: '80%', maxWidth: '600px', display: 'flex' }}>
-            <input 
-              type="text" 
-              placeholder="추천 여행지를 찾아보세요" // ✨ [cite: 7] 제거
-              style={{ 
-                padding: '15px', 
-                flexGrow: 1, 
-                border: '2px solid #007bff', 
-                borderRadius: '5px 0 0 5px',
-                fontSize: '1em',
-                outline: 'none'
-              }} 
-            />
-            <button style={{ 
-                padding: '15px 30px', 
-                marginLeft: '-2px', 
-                border: '2px solid #007bff', 
-                background: '#007bff', 
-                color: 'white',
-                borderRadius: '0 5px 5px 0',
-                cursor: 'pointer',
-                fontSize: '1em',
-                fontWeight: 'bold'
-              }}>
-              검색
+          <div className="carousel-container">
+            {/* 왼쪽 버튼 */}
+            <button className="carousel-button prev-button" onClick={prevSlide}>
+              ❮
+            </button>
+
+            {/* 카루셀 아이템들 */}
+            <div className="carousel-items">
+              {recommendations.map((item, index) => (
+                <div 
+                  key={item.id}
+                  className={`carousel-item ${index === currentSlide ? 'active' : ''}`}
+                >
+                  <img 
+                    src={item.image} 
+                    alt={item.name}
+                    className="carousel-image"
+                  />
+                  <div className="carousel-info">
+                    <p className="carousel-name">{item.name}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 오른쪽 버튼 */}
+            <button className="carousel-button next-button" onClick={nextSlide}>
+              ❯
             </button>
           </div>
         </section>
 
-        {/* 3. 섹션: 지역별 & 테마별 버튼/링크 */}
-        <section style={{ padding: '40px', textAlign: 'center' }}>
-          <h3>추천 기준 선택</h3>
-          <div style={{ marginTop: '20px' }}>
-            {/* ✨ 중첩된 Link 태그 및 불필요한 닫는 태그 제거 */}
-            <Link 
-              to="/region" 
-              style={{ 
-                margin: '0 15px', 
-                padding: '12px 25px', 
-                border: '1px solid #ccc', 
-                textDecoration: 'none', 
-                color: '#333',
-                borderRadius: '5px',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}
-            >
+        {/* 4. 지역별/테마별 버튼 섹션 */}
+        <section className="category-section">
+          <div className="category-buttons">
+            <Link to="/region" className="category-button region-btn">
               지역별
             </Link>
-
-            <Link 
-              to="/theme" 
-              style={{ 
-                margin: '0 15px', 
-                padding: '12px 25px', 
-                border: '1px solid #ccc', 
-                textDecoration: 'none', 
-                color: '#333',
-                borderRadius: '5px',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}
-            >
+            <Link to="/theme" className="category-button theme-btn">
               테마별
             </Link>
           </div>
         </section>
-
-        {/* 4. 이미지 갤러리 */}
-        <div style={{ display: 'flex', justifyContent: 'space-around', padding: '20px' }}>
-          <p>대표 이미지들이 표시될 영역입니다.</p>
-        </div>
       </div>
     </Layout>
   );
