@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 배경 (선택사항) -->
+  <rect width="200" height="200" fill="none"/>
+  
+  <!-- 비행기 아이콘 -->
+  <g transform="translate(50, 60)">
+    <!-- 비행기 본체 -->
+    <path d="M 25 10 L 15 30 L 25 25 L 35 30 Z" fill="#5DADE2" stroke="#0099cc" stroke-width="2" stroke-linejoin="round"/>
+    <!-- 비행기 날개 -->
+    <rect x="5" y="24" width="40" height="8" fill="#5DADE2" stroke="#0099cc" stroke-width="2" rx="2"/>
+    <!-- 비행기 꼬리 -->
+    <polygon points="20,35 20,45 25,40" fill="#5DADE2" stroke="#0099cc" stroke-width="2"/>
+  </g>
+  
+  <!-- 텍스트 "히위고" -->
+  <text x="100" y="140" font-size="36" font-weight="bold" font-family="Arial, sans-serif" fill="#0099cc" text-anchor="middle">
+    히위고
+  </text>
+</svg>
