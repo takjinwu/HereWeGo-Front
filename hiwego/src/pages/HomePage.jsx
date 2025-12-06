@@ -1,50 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; 
 import Layout from '../components/Layout/Layout';
 import touristService from '../services/touristService';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
-  // 💡 API에서 가져온 데이터를 저장할 상태
+  const navigate = useNavigate(); 
+  
   const [spots, setSpots] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [query, setQuery] = useState(''); 
 
-  // 💡 API 데이터 호출 로직
+  // 로컬 스토리지에서 토큰 확인
+  const token = localStorage.getItem('authToken'); 
+  const isLoggedIn = !!token;
+
+  // 💡 API 데이터 호출 로직 및 리다이렉션
   useEffect(() => {
-    const fetchRecommendations = async () => {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        setError('로그인이 필요합니다.'); 
-        setLoading(false);
-        // 로그인 페이지로 리다이렉트하거나 데이터 로드를 중단합니다.
-        // navigate('/login'); 
-        return;
-      }
-      try {
-        // ⭐ [API 호출] 지역 목록 검색 API를 사용하여 데이터를 가져옵니다.
-        // (추천 목록이므로, 임시로 "서울" 지역 데이터를 가져오는 것으로 가정합니다.)
-        // 백엔드 친구분께 이 함수에 사용할 적절한 키워드나 지역을 확인해 보세요.
-        const data = await touristService.getSpotsByRegion("서울"); 
-        
-        // 💡 백엔드 응답 구조에 맞게 데이터 경로를 지정합니다. 
-        // data.list 또는 data.spots 등에 목록이 담겨 있다면 경로를 수정해야 합니다.
-        setSpots(data.list || data); 
 
-      } catch (err) {
-        setError('추천 여행지 정보를 불러오는 데 실패했습니다.');
-        console.error('API 호출 실패:', err);
-      } finally {
-        setLoading(false);
-      }
+    //  비로그인 상태 처리: API 호출을 막고 안내 메시지 설정
+    const fetchRecommendations = async () => {
+      
+      // 비로그인 상태이므로 API 호출을 시도하지 않고 메시지 설정
+      setError('로그인이 필요한 서비스입니다. 회원가입 또는 로그인을 해주세요.'); 
+      setLoading(false);
+      return; 
     };
+      if (!isLoggedIn) {
+            setError('로그인이 필요한 서비스입니다. 회원가입 또는 로그인을 해주세요.'); 
+            setLoading(false);
+            return; // API 호출 중단
+          }
 
     fetchRecommendations();
-  }, []); // 컴포넌트 마운트 시 한 번만 실행
+  }, [isLoggedIn, navigate]);
 
-  // 슬라이드 로직은 spots 상태를 사용하도록 변경
+  // 슬라이드 로직
   const nextSlide = () => {
     if (spots.length === 0) return; 
     setCurrentSlide((prev) => (prev + 1) % spots.length);
@@ -54,26 +47,65 @@ const HomePage = () => {
     if (spots.length === 0) return; 
     setCurrentSlide((prev) => (prev - 1 + spots.length) % spots.length);
   };
+  
+  // 💡 검색어 입력 변경 핸들러
+  const handleSearchChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  // 💡 검색 버튼 클릭 및 API 호출 핸들러
+  const handleSearchSubmit = async () => {
+    if (!query) {
+        alert('검색어를 입력해주세요.');
+        return;
+    }
+    
+    if (!isLoggedIn) { // 로그인 안 했으면 검색 차단
+        alert('로그인 후 검색할 수 있습니다.');
+        return;
+    }
+
+    try {
+        const results = await touristService.getSpotsByKeyword(query);
+        console.log("검색 결과:", results);
+        // TODO: 검색 결과 페이지로 이동하거나, spots 상태를 업데이트하여 결과 표시 로직 추가
+        
+    } catch (error) {
+        console.error("검색 실패:", error);
+        alert("검색 중 오류가 발생했습니다.");
+    }
+  };
   
   // 렌더링 조건: 로딩, 에러, 데이터 없음 처리
   let carouselContent;
   if (loading) {
-    carouselContent = <div className="loading-message">추천 여행지 정보를 불러오는 중입니다...</div>;
+    carouselContent = <div className="loading-message">정보를 확인 중입니다...</div>;
   } else if (error) {
-    carouselContent = <div className="error-message">데이터 로드 실패: {error}</div>;
+    // 비로그인 시 표시할 메시지와 버튼
+    carouselContent = (
+      <div className="error-message">
+        {error}
+        <div style={{ marginTop: '15px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+          <Link to="/login" className="login-prompt-button" style={{ padding: '10px 20px', backgroundColor: '#64B5F6', color: 'white', borderRadius: '5px', textDecoration: 'none' }}>
+            로그인
+          </Link>
+          <Link to="/signup" className="signup-prompt-button" style={{ padding: '10px 20px', border: '1px solid #64B5F6', color: '#64B5F6', borderRadius: '5px', textDecoration: 'none' }}>
+            회원가입
+          </Link>
+        </div>
+      </div>
+    );
   } else if (spots.length === 0) {
     carouselContent = <div className="no-data-message">추천 여행지 데이터가 없습니다.</div>;
   } else {
     carouselContent = (
       <div className="carousel-items">
-        {/* spots 상태를 사용하여 동적 렌더링 */}
         {spots.map((item, index) => (
           <div 
-            key={item.contentId || index} // API 명세에 따라 contentId를 key로 사용
+            key={item.contentId || index} 
             className={`carousel-item ${index === currentSlide ? 'active' : ''}`}
           >
             <img 
-              // ⭐ 백엔드 응답 데이터의 필드명(예: firstimage, title)에 맞게 키를 사용합니다.
               src={item.firstimage || item.image || '기본_이미지_URL'} 
               alt={item.title || item.name} 
               className="carousel-image"
@@ -90,9 +122,37 @@ const HomePage = () => {
   return (
     <Layout>
       <div className="home-container">
-        {/* 2. 메인 배너 섹션 (그대로 유지) */}
+        {/* 2. 메인 배너 섹션 */}
         <section className="main-banner">
-          {/* ... */}
+          <div className="banner-content">
+            <div className="banner-text">
+              <h1 className="banner-title">Here we go!</h1>
+              <p className="banner-subtitle">가보고 싶은 추천 여행지</p>
+              
+              {/* 검색 바 */}
+              <div className="search-bar">
+                <input 
+                  type="text" 
+                  placeholder="추천 여행지를 찾아보세요"
+                  className="search-input"
+                  value={query} // 💡 상태 연결
+                  onChange={handleSearchChange} // 💡 입력 변경 핸들러 연결
+                />
+                <button className="search-button" onClick={handleSearchSubmit}> 
+                  🔍
+                </button>
+              </div>
+            </div>
+
+            {/* 배너 이미지 (정적) */}
+            <div className="banner-image">
+              <img 
+                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" 
+                alt="산 풍경"
+                className="hero-image"
+              />
+            </div>
+          </div>
         </section>
 
         {/* 3. 추천 여행지 카루셀 섹션 */}
@@ -102,10 +162,10 @@ const HomePage = () => {
           <div className="carousel-container">
             {/* 왼쪽 버튼 */}
             <button 
-                className="carousel-button prev-button" 
-                onClick={prevSlide}
-                disabled={loading || spots.length <= 1} 
-            >
+                className="carousel-button prev-button" 
+                onClick={prevSlide}
+                disabled={loading || spots.length <= 1 || !isLoggedIn} 
+            >
               ❮
             </button>
 
@@ -114,10 +174,10 @@ const HomePage = () => {
 
             {/* 오른쪽 버튼 */}
             <button 
-                className="carousel-button next-button" 
-                onClick={nextSlide}
-                disabled={loading || spots.length <= 1} 
-            >
+                className="carousel-button next-button" 
+                onClick={nextSlide}
+                disabled={loading || spots.length <= 1 || !isLoggedIn} 
+            >
               ❯
             </button>
           </div>
