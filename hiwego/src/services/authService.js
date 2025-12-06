@@ -59,6 +59,28 @@ const authService = {
     }
   }, 
 
+  // 관리자 - 회원 목록 조회
+  getUsers: async () => {
+      try {
+        // 엔드포인트: /api/v1/user/users
+        const response = await api.get('/api/v1/user/users'); 
+        return response.data;
+      } catch (error) {
+        throw error.response?.data || error.message;
+      }
+    },
+  
+    // 관리자 - 회원 삭제
+  adminDeleteUser: async (userId) => {
+    try {
+      // 엔드포인트: /api/v1/admin/delete-user/{userId}
+      const response = await api.delete(`/api/v1/admin/delete-user/${userId}`); 
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
   // 사용자 정보 수정
   updateProfile: async (userData) => {
     try {
