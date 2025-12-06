@@ -20,6 +20,22 @@ body {
   flex-direction: column;
   background-color: #fff;
 }
+/* src/styles/Layout.css 파일에 추가 */
+.nav-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 15px; /* 다른 nav-link와 간격 맞춤 */
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 16px; /* 다른 nav-link와 폰트 크기 맞춤 */
+}
+
+.nav-link-button:hover {
+  color: #0056b3; /* 원하는 호버 색상 */
+}
 
 /* ===== 헤더 ===== */
 .app-header {

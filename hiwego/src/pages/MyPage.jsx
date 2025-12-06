@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
+import authService from '../services/authService';
 import '../styles/MyPage.css';
 
 const MyPage = () => {
@@ -8,7 +9,7 @@ const MyPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     nickname: '여행자1',
-    email: 'traveler@example.com',
+    loginUserId: 'traveler@example.com',
     password: '••••••••',
     region: '서울',
     favorites: []
@@ -16,7 +17,7 @@ const MyPage = () => {
 
   const [editData, setEditData] = useState({
     nickname: userInfo.nickname,
-    email: userInfo.email,
+    loginUserId: userInfo.loginUserId,
     password: '',
     confirmPassword: ''
   });
@@ -38,7 +39,7 @@ const MyPage = () => {
     setUserInfo(prev => ({
       ...prev,
       nickname: editData.nickname,
-      email: editData.email,
+      loginUserId: editData.loginUserId,
       password: editData.password ? '••••••••' : prev.password
     }));
 
@@ -49,16 +50,19 @@ const MyPage = () => {
   const handleCancel = () => {
     setEditData({
       nickname: userInfo.nickname,
-      email: userInfo.email,
+      loginUserId: userInfo.loginUserId,
       password: '',
       confirmPassword: ''
     });
     setIsEditing(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
-      navigate('/');
+      await authService.logout();
+      alert('로그아웃 되었습니다.');
+      // 페이지를 새로고침하여 전체 상태를 초기화하고 헤더를 업데이트합니다.
+      window.location.href = '/';
     }
   };
 
@@ -84,8 +88,8 @@ const MyPage = () => {
                 </div>
 
                 <div className="profile-item">
-                  <label>이메일</label>
-                  <p>{userInfo.email}</p>
+                  <label>아이디</label>
+                  <p>{userInfo.loginUserId}</p>
                 </div>
 
                 <div className="profile-item">
@@ -139,10 +143,10 @@ const MyPage = () => {
                 <div className="form-group">
                   <label>이메일</label>
                   <input
-                    type="email"
-                    name="email"
+                    type="loginUserId"
+                    name="loginUserId"
                     className="edit-input"
-                    value={editData.email}
+                    value={editData.loginUserId}
                     onChange={handleEditChange}
                     placeholder="이메일"
                   />
