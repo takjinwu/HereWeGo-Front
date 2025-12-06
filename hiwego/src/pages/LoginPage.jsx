@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
+import authService from '../services/authService';
 import '../styles/Auth.css';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // 실제 로그인 로직은 여기에 구현
-    console.log('로그인 시도:', { email, password });
-    // 임시로 홈으로 이동
-    navigate('/');
+    setError('');
+    setLoading(true);
+
+    try {
+      await authService.login(email, password);
+      navigate('/');
+    } catch (err) {
+      setError(err.message || '로그인에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -21,6 +31,8 @@ const LoginPage = () => {
       <div className="auth-container">
         <div className="auth-box">
           <h1 className="auth-title">히위고</h1>
+          
+          {error && <div className="error-message">{error}</div>}
           
           <form onSubmit={handleLogin} className="auth-form">
             <div className="form-group">
@@ -48,8 +60,12 @@ const LoginPage = () => {
               </button>
             </div>
 
-            <button type="submit" className="auth-button login-button">
-              로그인
+            <button 
+              type="submit" 
+              className="auth-button login-button"
+              disabled={loading}
+            >
+              {loading ? '로그인 중...' : '로그인'}
             </button>
           </form>
 

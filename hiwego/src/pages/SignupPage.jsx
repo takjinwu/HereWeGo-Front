@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
+import authService from '../services/authService';
 import '../styles/Auth.css';
 
 const SignupPage = () => {
@@ -10,6 +11,8 @@ const SignupPage = () => {
     confirmPassword: '',
     nickname: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,18 +23,30 @@ const SignupPage = () => {
     }));
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    
+    setError('');
+
     if (formData.password !== formData.confirmPassword) {
-      alert('비밀번호가 일치하지 않습니다.');
+      setError('비밀번호가 일치하지 않습니다.');
       return;
     }
 
-    // 실제 회원가입 로직은 여기에 구현
-    console.log('회원가입 시도:', formData);
-    // 임시로 홈으로 이동
-    navigate('/');
+    setLoading(true);
+
+    try {
+      await authService.signup(
+        formData.email,
+        formData.password,
+        formData.nickname
+      );
+      alert('회원가입이 완료되었습니다!');
+      navigate('/login');
+    } catch (err) {
+      setError(err.message || '회원가입에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,6 +54,8 @@ const SignupPage = () => {
       <div className="auth-container">
         <div className="auth-box signup-box">
           <h1 className="auth-title">히위고</h1>
+          
+          {error && <div className="error-message">{error}</div>}
           
           <form onSubmit={handleSignup} className="auth-form signup-form">
             <div className="form-group">
@@ -95,8 +112,12 @@ const SignupPage = () => {
               />
             </div>
 
-            <button type="submit" className="auth-button signup-button">
-              회원가입
+            <button 
+              type="submit" 
+              className="auth-button signup-button"
+              disabled={loading}
+            >
+              {loading ? '가입 중...' : '회원가입'}
             </button>
           </form>
 
