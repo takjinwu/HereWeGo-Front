@@ -1,0 +1,271 @@
+/* 지역별 페이지 스타일 */
+
+.region-page {
+  min-height: calc(100vh - 90px);
+  background-color: #f9f9f9;
+  padding: 40px 20px;
+}
+
+.region-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== 헤더 ===== */
+.region-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.region-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 10px 0;
+}
+
+.region-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+/* ===== 메인 콘텐츠 ===== */
+.region-content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 40px;
+}
+
+/* ===== 지도 섹션 ===== */
+.region-map-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.region-map {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.region-button {
+  padding: 16px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.region-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.region-button.active {
+  border-color: #0099cc;
+  box-shadow: 0 4px 12px rgba(0, 153, 204, 0.3);
+  transform: scale(1.08);
+}
+
+/* ===== 여행지 카드 섹션 ===== */
+.attractions-section {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.attractions-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 25px 0;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #0099cc;
+}
+
+.attractions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.attraction-card {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.attraction-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.attraction-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: #f0f0f0;
+}
+
+.attraction-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.attraction-card:hover .attraction-image img {
+  transform: scale(1.1);
+}
+
+.attraction-info {
+  padding: 16px;
+}
+
+.attraction-info h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 8px 0;
+}
+
+.attraction-info p {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+}
+
+.no-selection {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.no-selection p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* ===== 반응형 디자인 ===== */
+@media (max-width: 1024px) {
+  .region-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .region-map {
+    max-width: 100%;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .attractions-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .region-page {
+    padding: 20px 16px;
+  }
+
+  .region-header {
+    margin-bottom: 30px;
+  }
+
+  .region-title {
+    font-size: 28px;
+  }
+
+  .region-subtitle {
+    font-size: 14px;
+  }
+
+  .region-content {
+    gap: 20px;
+  }
+
+  .region-map {
+    padding: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .region-button {
+    padding: 12px 10px;
+    font-size: 12px;
+  }
+
+  .attractions-section {
+    padding: 20px;
+  }
+
+  .attractions-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .attractions-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .attraction-image {
+    height: 150px;
+  }
+
+  .attraction-info {
+    padding: 12px;
+  }
+
+  .attraction-info h3 {
+    font-size: 14px;
+  }
+
+  .attraction-info p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .region-page {
+    padding: 16px 12px;
+  }
+
+  .region-title {
+    font-size: 24px;
+  }
+
+  .region-subtitle {
+    font-size: 13px;
+  }
+
+  .region-map {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .attractions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .attraction-image {
+    height: 200px;
+  }
+}

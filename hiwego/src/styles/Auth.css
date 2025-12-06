@@ -28,6 +28,17 @@
   letter-spacing: -0.5px;
 }
 
+.error-message {
+  background-color: #ffebee;
+  border: 1px solid #ff5252;
+  border-radius: 6px;
+  padding: 12px 16px;
+  color: #c62828;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
