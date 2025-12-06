@@ -2,10 +2,12 @@
 import api from '../utils/api';
 
 const attractionService = {
-  // 지역 목록 조회
-  getRegionList: async () => {
+  // 지역별 목록 조회 (수정됨: regionName 파라미터 추가)
+  getRegionList: async (regionName) => {
     try {
-      const response = await api.get('/api/v1/tour/regionList');
+      const response = await api.get('/api/v1/tour/regionList', {
+        params: { regionName } // 명세에 따라 regionName 파라미터 추가
+      });
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
