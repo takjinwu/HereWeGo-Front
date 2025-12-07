@@ -1,59 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
+import AttractionCard from '../components/AttractionCard/AttractionCard';
+import attractionService from '../services/attractionService';
 import '../styles/ThemePage.css';
 
+// 테마 목록 및 검색 키워드 매핑
+const THEMES = [
+  { name: '캠핑', emoji: '⛺', keyword: '캠핑' },
+  { name: '역사', emoji: '🏯', keyword: '역사' },
+  { name: '쇼핑', emoji: '🛍️', keyword: '쇼핑' },
+  { name: '축제', emoji: '🎉', keyword: '축제' },
+  { name: '음식', emoji: '🍜', keyword: '맛집' },
+  { name: '체험', emoji: '🎨', keyword: '체험' },
+  { name: '겨울', emoji: '⛄', keyword: '스키' },
+];
+
 const ThemePage = () => {
-  const [selectedTheme, setSelectedTheme] = useState(null);
+  const navigate = useNavigate();
+  const [selectedTheme, setSelectedTheme] = useState('캠핑');
+  const [attractions, setAttractions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const themes = [
-    { name: '자연경관', color: '#90EE90', icon: '🏞️' },
-    { name: '문화유산', color: '#FFD700', icon: '🏯' },
-    { name: '도시관광', color: '#87CEEB', icon: '🏙️' },
-    { name: '맛집투어', color: '#FFB6C1', icon: '🍜' },
-    { name: '야경/야생동물', color: '#DDA0DD', icon: '🌙' },
-    { name: '액티비티', color: '#F08080', icon: '🏃' },
-    { name: '휴양지', color: '#98FB98', icon: '🏖️' },
-    { name: '유명관광지', color: '#87CEEB', icon: '⭐' }
-  ];
+  // 선택된 테마의 여행지 조회
+  useEffect(() => {
+    if (selectedTheme) {
+      const fetchAttractions = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+          
+          // 선택된 테마의 키워드 찾기
+          const theme = THEMES.find(t => t.name === selectedTheme);
+          const keyword = theme?.keyword || selectedTheme;
+          
+          // API: GET /api/v1/tour/search/keyword?query=캠핑
+          const data = await attractionService.searchByKeyword(keyword);
+          console.log(`[${selectedTheme}] API 응답:`, data);
+          
+          // 응답 데이터 파싱
+          let attractionList = [];
+          if (Array.isArray(data)) {
+            attractionList = data;
+          } else if (data.items) {
+            attractionList = Array.isArray(data.items) ? data.items : [data.items];
+          } else if (data.response?.body?.items) {
+            attractionList = Array.isArray(data.response.body.items) ? data.response.body.items : [data.response.body.items];
+          }
+          
+          setAttractions(attractionList);
+        } catch (err) {
+          setError('여행지 정보를 불러올 수 없습니다.');
+          setAttractions([]);
+          console.error('Error fetching attractions:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-  const themeAttractions = {
-    '자연경관': [
-      { id: 1, name: '설악산', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop' },
-      { id: 2, name: '남이섬', image: 'https://images.unsplash.com/photo-1519225421122-fdbf58dc3f35?w=300&h=200&fit=crop' }
-    ],
-    '문화유산': [
-      { id: 1, name: '경복궁', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=200&fit=crop' },
-      { id: 2, name: '불국사', image: 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=300&h=200&fit=crop' }
-    ],
-    '도시관광': [
-      { id: 1, name: '서울 강남역', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop' },
-      { id: 2, name: '부산 해운대', image: 'https://images.unsplash.com/photo-1519225421122-fdbf58dc3f35?w=300&h=200&fit=crop' }
-    ],
-    '맛집투어': [
-      { id: 1, name: '전주 한옥마을 맛집', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=200&fit=crop' },
-      { id: 2, name: '강릉 영동해변 회센터', image: 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=300&h=200&fit=crop' }
-    ],
-    '야경/야생동물': [
-      { id: 1, name: '서울 남산타워 야경', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop' },
-      { id: 2, name: '에버랜드 야생동물원', image: 'https://images.unsplash.com/photo-1519225421122-fdbf58dc3f35?w=300&h=200&fit=crop' }
-    ],
-    '액티비티': [
-      { id: 1, name: '스키장', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=200&fit=crop' },
-      { id: 2, name: '래프팅', image: 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=300&h=200&fit=crop' }
-    ],
-    '휴양지': [
-      { id: 1, name: '제주도 해변', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop' },
-      { id: 2, name: '남해 여행지', image: 'https://images.unsplash.com/photo-1519225421122-fdbf58dc3f35?w=300&h=200&fit=crop' }
-    ],
-    '유명관광지': [
-      { id: 1, name: '명동', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=200&fit=crop' },
-      { id: 2, name: '인사동', image: 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=300&h=200&fit=crop' }
-    ]
-  };
-
-  const handleThemeClick = (themeName) => {
-    setSelectedTheme(themeName);
-  };
+      fetchAttractions();
+    }
+  }, [selectedTheme]);
 
   return (
     <Layout>
@@ -62,57 +70,53 @@ const ThemePage = () => {
           {/* 제목 */}
           <div className="theme-header">
             <h1 className="theme-title">테마별 추천 여행지</h1>
-            <p className="theme-subtitle">
-              {selectedTheme ? `${selectedTheme} 추천 여행지 목록` : '테마를 선택하세요'}
-            </p>
+            <p className="theme-subtitle">{selectedTheme} 추천 여행지</p>
           </div>
 
-          <div className="theme-content">
-            {/* 테마 선택 섹션 */}
-            <div className="theme-selector-section">
-              <div className="theme-selector">
-                {themes.map((theme) => (
-                  <div
-                    key={theme.name}
-                    className={`theme-button ${selectedTheme === theme.name ? 'active' : ''}`}
-                    style={{
-                      backgroundColor: selectedTheme === theme.name ? theme.color : '#e0e0e0',
-                      opacity: selectedTheme === theme.name ? 1 : 0.6
-                    }}
-                    onClick={() => handleThemeClick(theme.name)}
-                  >
-                    <div className="theme-icon">{theme.icon}</div>
-                    <div className="theme-name">{theme.name}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* 테마 선택 탭 */}
+          <div className="theme-tabs">
+            {THEMES.map((theme) => (
+              <button
+                key={theme.name}
+                className={`theme-tab ${selectedTheme === theme.name ? 'active' : ''}`}
+                onClick={() => setSelectedTheme(theme.name)}
+              >
+                <span className="theme-emoji">{theme.emoji}</span>
+                <span className="theme-name">{theme.name}</span>
+              </button>
+            ))}
+          </div>
 
-            {/* 여행지 카드 섹션 */}
-            <div className="attractions-section">
-              {selectedTheme ? (
-                <>
-                  <h2 className="attractions-title">{selectedTheme} 추천 여행지</h2>
-                  <div className="attractions-grid">
-                    {(themeAttractions[selectedTheme] || []).map((attraction) => (
-                      <div key={attraction.id} className="attraction-card">
-                        <div className="attraction-image">
-                          <img src={attraction.image} alt={attraction.name} />
-                        </div>
-                        <div className="attraction-info">
-                          <h3>{attraction.name}</h3>
-                          <p></p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="no-selection">
-                  <p>위의 테마를 선택하면 추천 여행지를 볼 수 있습니다.</p>
-                </div>
-              )}
-            </div>
+          {/* 여행지 카드 섹션 */}
+          <div className="theme-attractions">
+            {loading ? (
+              <div className="theme-loading">여행지 정보를 불러오는 중입니다...</div>
+            ) : error ? (
+              <div className="theme-error">
+                <p>{error}</p>
+              </div>
+            ) : attractions.length > 0 ? (
+              <div className="attractions-grid">
+                {attractions.map((attraction, index) => {
+                  const key = `${selectedTheme}-${index}`;
+                  return (
+                    <AttractionCard
+                      key={key}
+                      attraction={attraction}
+                      onClick={() => {
+                        const contentId = attraction.contentid || attraction.id;
+                        console.log('카드 클릭:', { title: attraction.title, contentId, index });
+                        navigate(`/detail/${contentId}`);
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="theme-empty">
+                <p>{selectedTheme}의 여행지 정보가 없습니다.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

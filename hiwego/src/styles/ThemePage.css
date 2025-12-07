@@ -1,8 +1,8 @@
 /* 테마별 페이지 스타일 */
 
 .theme-page {
-  min-height: calc(100vh - 90px);
-  background-color: #f9f9f9;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
   padding: 40px 20px;
 }
 
@@ -14,153 +14,131 @@
 /* ===== 헤더 ===== */
 .theme-header {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 
 .theme-title {
-  font-size: 36px;
+  font-size: 40px;
   font-weight: 700;
-  color: #222;
-  margin: 0 0 10px 0;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
 }
 
 .theme-subtitle {
   font-size: 16px;
-  color: #666;
+  color: #718096;
   margin: 0;
+  font-weight: 500;
 }
 
-/* ===== 메인 콘텐츠 ===== */
-.theme-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
-}
-
-/* ===== 테마 선택 섹션 ===== */
-.theme-selector-section {
+/* ===== 테마 탭 섹션 ===== */
+.theme-tabs {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: center;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.theme-selector {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
-  width: 100%;
-  max-width: 900px;
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.theme-button {
-  padding: 20px 16px;
-  border: 2px solid #ddd;
+.theme-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f5f7fa;
+  border: 2px solid transparent;
   border-radius: 8px;
   cursor: pointer;
-  text-align: center;
-  transition: all 0.3s ease;
-  background-color: #e0e0e0;
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-.theme-button:hover {
-  transform: scale(1.08);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.theme-tab:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e0;
 }
 
-.theme-button.active {
-  border-color: #0099cc;
-  box-shadow: 0 6px 16px rgba(0, 153, 204, 0.3);
-  transform: scale(1.1);
+.theme-tab.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.theme-icon {
-  font-size: 32px;
+.theme-emoji {
+  font-size: 20px;
+  line-height: 1;
 }
 
 .theme-name {
-  font-size: 13px;
   font-weight: 600;
-  letter-spacing: -0.5px;
 }
 
 /* ===== 여행지 카드 섹션 ===== */
-.attractions-section {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.attractions-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #222;
-  margin: 0 0 25px 0;
-  padding-bottom: 15px;
-  border-bottom: 3px solid #0099cc;
+.theme-attractions {
+  width: 100%;
 }
 
 .attractions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.attraction-card {
-  background-color: #fff;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.attraction-card:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-4px);
-}
-
-.attraction-image {
+  gap: 24px;
   width: 100%;
-  height: 200px;
-  overflow: hidden;
-  background-color: #f0f0f0;
 }
 
-.attraction-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+/* ===== 상태 메시지 ===== */
+.theme-loading,
+.theme-error,
+.theme-empty {
+  text-align: center;
+  padding: 60px 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.attraction-card:hover .attraction-image img {
-  transform: scale(1.1);
+.theme-loading {
+  font-size: 18px;
+  color: #718096;
+  font-weight: 500;
 }
 
-.attraction-info {
-  padding: 16px;
+.theme-error,
+.theme-empty {
+  color: #4a5568;
 }
 
-.attraction-info h3 {
+.theme-error p,
+.theme-empty p {
   font-size: 16px;
-  font-weight: 700;
-  color: #222;
-  margin: 0 0 8px 0;
+  margin: 0 0 20px 0;
+  line-height: 1.6;
 }
 
-.attraction-info p {
-  font-size: 13px;
-  color: #999;
-  margin: 0;
+.theme-error button,
+.theme-empty button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.theme-error button:hover,
+.theme-empty button:hover {
+  background: #2563eb;
 }
 
 .no-selection {
@@ -176,38 +154,41 @@
 
 /* ===== 반응형 디자인 ===== */
 @media (max-width: 1024px) {
-  .theme-selector {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 12px;
-    padding: 20px;
+  .theme-page {
+    padding: 32px 20px;
   }
 
-  .theme-button {
-    padding: 16px 12px;
-    gap: 8px;
+  .theme-title {
+    font-size: 32px;
   }
 
-  .theme-icon {
-    font-size: 28px;
+  .theme-tabs {
+    gap: 10px;
+    padding: 16px;
   }
 
-  .theme-name {
-    font-size: 12px;
+  .theme-tab {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .theme-emoji {
+    font-size: 18px;
   }
 
   .attractions-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
+    gap: 20px;
   }
 }
 
 @media (max-width: 768px) {
   .theme-page {
-    padding: 20px 16px;
+    padding: 24px 16px;
   }
 
   .theme-header {
-    margin-bottom: 30px;
+    margin-bottom: 32px;
   }
 
   .theme-title {
@@ -218,63 +199,40 @@
     font-size: 14px;
   }
 
-  .theme-content {
-    gap: 20px;
+  .theme-tabs {
+    gap: 8px;
+    padding: 12px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .theme-selector {
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-    gap: 10px;
-    padding: 16px;
+  .theme-tab {
+    padding: 8px 12px;
+    font-size: 12px;
+    flex-shrink: 0;
   }
 
-  .theme-button {
-    padding: 14px 10px;
-    gap: 6px;
-  }
-
-  .theme-icon {
-    font-size: 24px;
-  }
-
-  .theme-name {
-    font-size: 11px;
-  }
-
-  .attractions-section {
-    padding: 20px;
-  }
-
-  .attractions-title {
-    font-size: 20px;
-    margin-bottom: 20px;
+  .theme-emoji {
+    font-size: 16px;
   }
 
   .attractions-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
+    gap: 16px;
   }
 
-  .attraction-image {
-    height: 150px;
-  }
-
-  .attraction-info {
-    padding: 12px;
-  }
-
-  .attraction-info h3 {
-    font-size: 14px;
-  }
-
-  .attraction-info p {
-    font-size: 12px;
+  .theme-loading,
+  .theme-error,
+  .theme-empty {
+    padding: 40px 24px;
   }
 }
 
 @media (max-width: 480px) {
   .theme-page {
-    padding: 16px 12px;
+    padding: 20px 12px;
   }
 
   .theme-title {
@@ -282,28 +240,36 @@
   }
 
   .theme-subtitle {
-    font-size: 13px;
+    font-size: 12px;
   }
 
-  .theme-selector {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    padding: 12px;
+  .theme-tabs {
+    gap: 6px;
+    padding: 8px;
   }
 
-  .theme-button {
-    padding: 12px 8px;
+  .theme-tab {
+    padding: 6px 10px;
+    font-size: 11px;
   }
 
-  .theme-icon {
-    font-size: 20px;
+  .theme-emoji {
+    font-size: 14px;
+  }
+
+  .theme-name {
+    display: none;
   }
 
   .attractions-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .attraction-image {
-    height: 200px;
+  .theme-loading,
+  .theme-error,
+  .theme-empty {
+    padding: 32px 16px;
+    font-size: 14px;
   }
 }
