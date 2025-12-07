@@ -1,56 +1,205 @@
-// src/pages/DetailPage.jsx (최종 정리)
-
-import React from 'react';
-import { useParams } from 'react-router-dom';
+// src/pages/DetailPage.jsx
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
-import { findAttractionById } from '../utils/data';
+import attractionService from '../services/attractionService';
+import '../styles/DetailPage.css';
 
 const DetailPage = () => {
-  const { id } = useParams(); 
-  const attraction = findAttractionById(id);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [attraction, setAttraction] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!attraction) {
+  useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        console.log('[DetailPage] contentId:', id);
+        
+        if (!id) {
+          setError('유효하지 않은 관광지 ID입니다.');
+          setLoading(false);
+          return;
+        }
+        
+        // API: GET /api/v1/tour/detail/common?contentId=123
+        const data = await attractionService.getTourDetail(id);
+        console.log('[DetailPage] 상세정보 API 응답 전체:', data);
+        console.log('[DetailPage] 응답 타입:', typeof data);
+        
+        // 응답 구조 상세 로깅
+        if (data.response) {
+          console.log('[DetailPage] response 있음:', data.response);
+          console.log('[DetailPage] response.body:', data.response.body);
+          console.log('[DetailPage] response.body.items:', data.response.body?.items);
+          console.log('[DetailPage] response.body.items 타입:', typeof data.response.body?.items);
+        }
+        
+        // 다양한 응답 구조에 대응
+        let detailData = null;
+        
+        // 1. API 명세: response.body.items.item[0]
+        if (data.response?.body?.items?.item?.[0]) {
+          detailData = data.response.body.items.item[0];
+          console.log('[DetailPage] 파싱 경로: response.body.items.item[0]');
+        }
+        // 2. response.body.items가 배열이면
+        else if (Array.isArray(data.response?.body?.items) && data.response.body.items.length > 0) {
+          detailData = data.response.body.items[0];
+          console.log('[DetailPage] 파싱 경로: response.body.items[0] (배열)');
+        }
+        // 3. response.body.item이 있으면
+        else if (data.response?.body?.item) {
+          detailData = Array.isArray(data.response.body.item) ? data.response.body.item[0] : data.response.body.item;
+          console.log('[DetailPage] 파싱 경로: response.body.item');
+        }
+        // 4. 기타 경로들
+        else if (data.item) {
+          detailData = data.item;
+          console.log('[DetailPage] 파싱 경로: data.item');
+        }
+        else if (data.items?.[0]) {
+          detailData = data.items[0];
+          console.log('[DetailPage] 파싱 경로: data.items[0]');
+        }
+        else if (typeof data === 'object' && data.title) {
+          detailData = data;
+          console.log('[DetailPage] 파싱 경로: data (직접)');
+        }
+        else {
+          console.warn('[DetailPage] ⚠️ 데이터를 찾을 수 없음! API 응답 구조 확인 필요');
+          detailData = data;
+        }
+        
+        console.log('[DetailPage] 파싱된 상세정보:', detailData);
+        
+        if (!detailData || Object.keys(detailData).length === 0) {
+          setError('관광지 정보를 찾을 수 없습니다. API 응답이 비어있습니다.');
+        } else {
+          setAttraction(detailData);
+        }
+      } catch (err) {
+        setError('관광지 정보를 불러올 수 없습니다.');
+        console.error('Error fetching detail:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetail();
+  }, [id]);
+
+  if (loading) {
     return (
       <Layout>
-        <div style={{ padding: '40px', textAlign: 'center' }}>
-          <h2>404 Not Found</h2>
-          <p>존재하지 않는 여행지 ID입니다: {id}</p>
+        <div className="detail-page">
+          <div className="detail-loading">로딩 중입니다...</div>
         </div>
       </Layout>
     );
   }
 
+  if (error || !attraction) {
+    return (
+      <Layout>
+        <div className="detail-page">
+          <div className="detail-error">
+            <p>{error || '관광지 정보를 찾을 수 없습니다.'}</p>
+            <button onClick={() => navigate(-1)}>뒤로가기</button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // 데이터 필드명 호환성 처리
+  const imageUrl = attraction.firstimage || attraction.firstImage || '';
+  const title = attraction.title || attraction.name || '';
+  const address = attraction.addr1 || attraction.address || '';
+  const description = attraction.overview || attraction.description || '';
+  const tel = attraction.tel || '';
+  const category = attraction.cat3 || attraction.category || '';
+
   return (
     <Layout>
-      <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
-        {/* 1. 메인 이미지/정보 섹션 */}
-        <section style={{ borderBottom: '1px solid #eee', paddingBottom: '20px', marginBottom: '20px' }}>
-          <h1 style={{ marginBottom: '10px' }}>{attraction.name}</h1>
-          <p style={{ color: '#666' }}>
-            ID: {attraction.id} | 카테고리: {attraction.source ? '지역 추천' : '테마 추천'}
-          </p>
-          
-          <div style={{ height: '300px', background: '#ccc', marginTop: '20px', textAlign: 'center', lineHeight: '300px' }}>
-            {attraction.image} (메인 이미지 영역)
+      <div className="detail-page">
+        <div className="detail-container">
+          {/* 헤더 */}
+          <div className="detail-header">
+            <button className="back-btn" onClick={() => navigate(-1)}>
+              ← 돌아가기
+            </button>
           </div>
-        </section>
 
-        {/* 2. 상세 설명 섹션 */}
-        <section>
-          <h2>여행지 소개</h2>
-          <p style={{ marginTop: '15px', lineHeight: '1.8' }}>
-            {attraction.name}에 대한 상세한 설명이 여기에 들어갑니다.
-          </p>
-        </section>
+          {/* 메인 이미지 */}
+          <div className="detail-image-section">
+            {imageUrl ? (
+              <img src={imageUrl} alt={title} />
+            ) : (
+              <div className="no-image">이미지 없음</div>
+            )}
+          </div>
 
-        {/* 3. 리뷰 및 위치 섹션 */}
-        <section style={{ marginTop: '30px', padding: '20px', background: '#f9f9f9' }}>
-          <h3>위치 및 정보</h3>
-          <p>지도 컴포넌트와 주소 정보가 들어갈 자리입니다.</p>
-        </section>
+          {/* 상세 정보 */}
+          <div className="detail-info">
+            <h1 className="detail-title">{title}</h1>
+            
+            {category && (
+              <p className="detail-category">📍 {category}</p>
+            )}
+
+            {address && (
+              <div className="detail-section">
+                <h3>주소</h3>
+                <p>{address}</p>
+              </div>
+            )}
+
+            {tel && (
+              <div className="detail-section">
+                <h3>연락처</h3>
+                <p>{tel}</p>
+              </div>
+            )}
+
+            {description && (
+              <div className="detail-section">
+                <h3>소개</h3>
+                <p>{description}</p>
+              </div>
+            )}
+
+            {/* 관광지 ID */}
+            <div className="detail-section" style={{ fontSize: '0.85em', color: '#999' }}>
+              <p>Content ID: {id}</p>
+            </div>
+          </div>
+
+          {/* 액션 버튼 */}
+          <div className="detail-actions">
+            <button className="btn-back" onClick={() => navigate(-1)}>
+              뒤로가기
+            </button>
+            <button className="btn-share" onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: title,
+                  text: `${title}을 확인해보세요!`,
+                  url: window.location.href,
+                });
+              }
+            }}>
+              공유하기
+            </button>
+          </div>
+        </div>
       </div>
     </Layout>
   );
 };
 
-export default DetailPage; // ✨ export default 확인
+export default DetailPage;
