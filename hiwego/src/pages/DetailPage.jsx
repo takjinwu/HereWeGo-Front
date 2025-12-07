@@ -147,10 +147,6 @@ const DetailPage = () => {
           {/* 상세 정보 */}
           <div className="detail-info">
             <h1 className="detail-title">{title}</h1>
-            
-            {category && (
-              <p className="detail-category">📍 {category}</p>
-            )}
 
             {address && (
               <div className="detail-section">
@@ -172,11 +168,6 @@ const DetailPage = () => {
                 <p>{description}</p>
               </div>
             )}
-
-            {/* 관광지 ID */}
-            <div className="detail-section" style={{ fontSize: '0.85em', color: '#999' }}>
-              <p>Content ID: {id}</p>
-            </div>
           </div>
 
           {/* 액션 버튼 */}
