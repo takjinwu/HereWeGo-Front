@@ -30,22 +30,26 @@ const MyPage = () => {
     }));
   };
 
-  const handleSaveEdit = () => {
-    if (editData.password && editData.password !== editData.confirmPassword) {
-      alert('비밀번호가 일치하지 않습니다.');
-      return;
-    }
+const handleSaveEdit = async () => {
+  if (editData.password && editData.password !== editData.confirmPassword) {
+    alert('비밀번호가 일치하지 않습니다.');
+    return;
+  }
 
+  try {
+    await authService.updateUser(editData); // 서버에 수정 요청
     setUserInfo(prev => ({
       ...prev,
       nickname: editData.nickname,
       loginUserId: editData.loginUserId,
       password: editData.password ? '••••••••' : prev.password
     }));
-
     setIsEditing(false);
     alert('정보가 수정되었습니다.');
-  };
+  } catch (error) {
+    alert('정보 수정에 실패했습니다.');
+  }
+};
 
   const handleCancel = () => {
     setEditData({
@@ -143,7 +147,7 @@ const MyPage = () => {
                 <div className="form-group">
                   <label>이메일</label>
                   <input
-                    type="loginUserId"
+                    type="email"
                     name="loginUserId"
                     className="edit-input"
                     value={editData.loginUserId}

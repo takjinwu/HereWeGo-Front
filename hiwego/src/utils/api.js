@@ -1,6 +1,7 @@
-// src/utils/api.js
-import axios from 'axios';
+import axios from "axios";
 
+// src/utils/api.js
+axios
 const API_URL = import.meta.env.VITE_API_URL || 'https://herewego-backend.onrender.com';
 
 const api = axios.create({
