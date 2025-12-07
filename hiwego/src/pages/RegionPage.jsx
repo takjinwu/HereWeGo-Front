@@ -2,37 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
 import attractionService from '../services/attractionService';
+import AttractionCard from '../components/AttractionCard/AttractionCard';
 import '../styles/RegionPage.css';
+
+// 지역 목록 (6개 지역)
+const REGIONS = [
+  { name: '수도권', emoji: '🏛️' },
+  { name: '강원권', emoji: '⛰️' },
+  { name: '충청권', emoji: '🌾' },
+  { name: '전라권', emoji: '🏞️' },
+  { name: '경상권', emoji: '🏯' },
+  { name: '제주도', emoji: '🏝️' },
+];
 
 const RegionPage = () => {
   const navigate = useNavigate();
-  const [selectedRegion, setSelectedRegion] = useState(null);
-  const [regions, setRegions] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState('수도권');
   const [attractions, setAttractions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // 지역 목록 조회
-  useEffect(() => {
-    const fetchRegions = async () => {
-      try {
-        setLoading(true);
-        const data = await attractionService.getRegionList();
-        setRegions(data.regions || []);
-        // 첫 번째 지역 자동 선택
-        if (data.regions && data.regions.length > 0) {
-          setSelectedRegion(data.regions[0].name);
-        }
-      } catch (err) {
-        setError('지역 목록을 불러올 수 없습니다.');
-        console.error('Error fetching regions:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRegions();
-  }, []);
 
   // 선택된 지역의 여행지 조회
   useEffect(() => {
@@ -40,9 +28,13 @@ const RegionPage = () => {
       const fetchAttractions = async () => {
         try {
           setLoading(true);
-          const data = await attractionService.getTourDetail(selectedRegion);
-          setAttractions(data.attractions || []);
+          setError(null);
+          // API: GET /api/v1/tour/regionList?regionName=수도권
+          const data = await attractionService.getRegionList(selectedRegion);
+          console.log(`[${selectedRegion}] API 응답:`, data);
+          setAttractions(data.list || data || []);
         } catch (err) {
+          setError('여행지 정보를 불러올 수 없습니다.');
           setAttractions([]);
           console.error('Error fetching attractions:', err);
         } finally {
@@ -58,18 +50,6 @@ const RegionPage = () => {
     setSelectedRegion(regionName);
   };
 
-  if (loading && regions.length === 0) {
-    return (
-      <Layout>
-        <div className="region-page">
-          <div className="region-container">
-            <p>지역 정보를 불러오는 중입니다...</p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
   return (
     <Layout>
       <div className="region-page">
@@ -77,64 +57,68 @@ const RegionPage = () => {
           {/* 제목 */}
           <div className="region-header">
             <h1 className="region-title">지역별 추천 여행지</h1>
-            <p className="region-subtitle">
-              {selectedRegion ? `${selectedRegion} 추천 여행지 목록` : '지역을 선택하세요'}
-            </p>
+            <p className="region-subtitle">{selectedRegion} 추천 여행지</p>
           </div>
 
-          <div className="region-content">
-            {/* 지역 선택 섹션 */}
-            <div className="region-map-section">
-              <div className="region-map">
-                {regions.map((region) => (
-                  <div
-                    key={region.name}
-                    className={`region-button ${selectedRegion === region.name ? 'active' : ''}`}
-                    style={{
-                      backgroundColor: selectedRegion === region.name ? '#4CAF50' : '#e0e0e0',
-                      opacity: selectedRegion === region.name ? 1 : 0.6
-                    }}
-                    onClick={() => handleRegionClick(region.name)}
-                  >
-                    {region.name}
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* 지역 선택 탭 */}
+          <div className="region-tabs">
+            {REGIONS.map((region) => (
+              <button
+                key={region.name}
+                className={`region-tab ${selectedRegion === region.name ? 'active' : ''}`}
+                onClick={() => setSelectedRegion(region.name)}
+              >
+                <span className="region-emoji">{region.emoji}</span>
+                <span className="region-name">{region.name}</span>
+              </button>
+            ))}
+          </div>
 
-            {/* 여행지 카드 섹션 */}
-            <div className="attractions-section">
-              {selectedRegion ? (
-                <>
-                  <h2 className="attractions-title">{selectedRegion} 추천 여행지</h2>
-                  {loading ? (
-                    <p>여행지 정보를 불러오는 중입니다...</p>
-                  ) : attractions.length > 0 ? (
-                    <div className="attractions-grid">
-                      {attractions.map((attraction) => (
-                        <div key={attraction.id || attraction.contentId} className="attraction-card">
-                          <div className="attraction-image">
-                            <img src={attraction.image || 'https://via.placeholder.com/300x200'} alt={attraction.name} />
-                          </div>
-                          <div className="attraction-info">
-                            <h3>{attraction.name || attraction.title}</h3>
-                            <p>{attraction.address || ''}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="no-selection">
-                      <p>이 지역의 여행지 정보가 없습니다.</p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="no-selection">
-                  <p>왼쪽 지역을 선택하면 추천 여행지를 볼 수 있습니다.</p>
-                </div>
-              )}
-            </div>
+          {/* 여행지 카드 섹션 */}
+          <div className="region-attractions">
+            {loading ? (
+              <div className="region-loading">여행지 정보를 불러오는 중입니다...</div>
+            ) : error ? (
+              <div className="region-error">
+                <p>{error}</p>
+              </div>
+            ) : attractions.length > 0 ? (
+              <div className="attractions-grid">
+                {attractions.map((attraction, index) => {
+                  // 다양한 필드명 대응 (contentid, contentId, id 등)
+                  const contentId = attraction.contentid || attraction.contentId || attraction.id;
+                  const key = contentId || index;
+                  console.log(`[${selectedRegion}] 여행지 #${index}:`, {
+                    name: attraction.title || attraction.name,
+                    contentid: attraction.contentid,
+                    contentId: attraction.contentId,
+                    id: attraction.id,
+                    전체데이터: attraction,
+                    key: key,
+                  });
+                  
+                  return (
+                    <AttractionCard
+                      key={key}
+                      attraction={attraction}
+                      onClick={() => {
+                        const id = contentId;
+                        console.log('카드 클릭:', { name: attraction.title, contentId: id, 전체: attraction });
+                        if (id) {
+                          navigate(`/detail/${id}`);
+                        } else {
+                          console.warn('⚠️ contentId가 없습니다!');
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="region-empty">
+                <p>이 지역의 여행지 정보가 없습니다.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,0 +1,282 @@
+/* src/styles/DetailPage.css */
+
+.detail-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
+  padding: 40px 20px;
+}
+
+.detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* 헤더 */
+.detail-header {
+  padding: 20px 40px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #f0f4ff;
+}
+
+/* 메인 이미지 */
+.detail-image-section {
+  width: 100%;
+  height: 400px;
+  background: #f0f0f0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-image {
+  color: #999;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* 상세 정보 */
+.detail-info {
+  padding: 40px;
+}
+
+.detail-title {
+  font-size: 40px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.5px;
+}
+
+.detail-category {
+  font-size: 16px;
+  color: #718096;
+  margin: 0 0 24px 0;
+  font-weight: 500;
+}
+
+.detail-section {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-section:last-of-type {
+  border-bottom: none;
+}
+
+.detail-section h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 12px 0;
+}
+
+.detail-section p {
+  font-size: 16px;
+  color: #4a5568;
+  line-height: 1.8;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* 액션 버튼 */
+.detail-actions {
+  padding: 0 40px 40px 40px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-back,
+.btn-share {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.btn-back:hover {
+  background: #cbd5e0;
+}
+
+.btn-share {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-share:hover {
+  background: #2563eb;
+}
+
+/* 로딩 상태 */
+.detail-loading {
+  padding: 60px 40px;
+  text-align: center;
+  font-size: 18px;
+  color: #718096;
+  font-weight: 500;
+}
+
+/* 에러 상태 */
+.detail-error {
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.detail-error p {
+  font-size: 16px;
+  color: #4a5568;
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+}
+
+.detail-error button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.detail-error button:hover {
+  background: #2563eb;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .detail-page {
+    padding: 24px 16px;
+  }
+
+  .detail-container {
+    border-radius: 8px;
+  }
+
+  .detail-header {
+    padding: 16px 24px;
+  }
+
+  .detail-image-section {
+    height: 300px;
+  }
+
+  .detail-info {
+    padding: 24px;
+  }
+
+  .detail-title {
+    font-size: 28px;
+  }
+
+  .detail-section {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .detail-section h3 {
+    font-size: 16px;
+  }
+
+  .detail-section p {
+    font-size: 14px;
+  }
+
+  .detail-actions {
+    padding: 0 24px 24px 24px;
+    flex-wrap: wrap;
+  }
+
+  .btn-back,
+  .btn-share {
+    flex: 1;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-page {
+    padding: 16px 12px;
+  }
+
+  .detail-header {
+    padding: 12px 16px;
+  }
+
+  .detail-image-section {
+    height: 240px;
+  }
+
+  .detail-info {
+    padding: 16px;
+  }
+
+  .detail-title {
+    font-size: 24px;
+  }
+
+  .detail-category {
+    font-size: 14px;
+  }
+
+  .detail-section {
+    margin-bottom: 20px;
+  }
+
+  .detail-section h3 {
+    font-size: 14px;
+  }
+
+  .detail-section p {
+    font-size: 13px;
+  }
+
+  .detail-actions {
+    padding: 0 16px 16px 16px;
+  }
+
+  .btn-back,
+  .btn-share {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+}
