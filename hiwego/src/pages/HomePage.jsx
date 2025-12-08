@@ -12,8 +12,9 @@ const HomePage = () => {
   const [error, setError] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchQuery, setSearchQuery] = useState(''); 
-const [searchResults, setSearchResults] = useState([]); 
+  const [searchResults, setSearchResults] = useState([]); 
   const [searchError, setSearchError] = useState(null);
+  const [featured, setFeatured] = useState(null); // 랜덤 추천 항목
 
   const token = localStorage.getItem('authToken'); 
   const isLoggedIn = !!token;
@@ -77,6 +78,8 @@ const [searchResults, setSearchResults] = useState([]);
         alert('로그인 후 검색할 수 있습니다.');
         return;
     }
+  navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+
 
 try {
         const results = await tourService.getSpotsByKeyword(searchQuery);

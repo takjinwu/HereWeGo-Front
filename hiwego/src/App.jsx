@@ -8,12 +8,14 @@ import DetailPage from './pages/DetailPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import MyPage from './pages/MyPage';
+import SearchResultsPage from './pages/SearchResultsPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchResultsPage />} />
         
         {/* 지역별 라우트 */}
         <Route path="/region" element={<RegionPage />} />

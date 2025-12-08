@@ -234,3 +234,37 @@ body {
     font-size: 12px;
   }
 }
+
+/* Header search (헤더 돋보기 토글 검색창) */
+.header-actions { display:flex; align-items:center; gap:10px; position:relative; }
+.header-search-container {
+  position:relative;
+  transition: width .18s ease, opacity .18s ease;
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+.header-search-container.open {
+  width: 220px; /* 필요하면 조정 */
+  opacity: 1;
+}
+.header-search-input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  outline: none;
+  font-size: 14px;
+}
+.search-icon-btn {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.search-icon-btn:hover { background:#f3f7fb; }
+.logout-btn { margin-left:8px; padding:6px 10px; cursor:pointer; }
+@media (max-width:600px) {
+  .header-search-container.open { width: 140px; }
+}
