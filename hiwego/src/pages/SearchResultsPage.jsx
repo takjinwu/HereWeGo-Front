@@ -59,7 +59,7 @@ export default function SearchResultsPage() {
         // normalize
         const normalized = (list || []).map(normalizeItem);
         if (!mounted) return;
-        setResults(normalized.slice(0, Math.min(5, normalized.length)));
+        setResults(normalized.slice(0, Math.min(10, normalized.length)));
       } catch (err) {
         console.error("검색 중 오류:", err);
         if (!mounted) return;

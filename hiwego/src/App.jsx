@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import MyPage from './pages/MyPage';
 import SearchResultsPage from './pages/SearchResultsPage';
+import ProfileEditPage from './pages/ProfileEditPage';
 
 function App() {
   return (
@@ -31,7 +32,12 @@ function App() {
         {/* 인증 라우트 */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/mypage" element={<MyPage />} />
+        
+        {/* 마이페이지 라우트 */}
+        <Route path="/mypage" element={<MyPage />} /> 
+
+        {/* 회원 정보 수정 (편집 화면) 컴포넌트 연결 */}
+        <Route path="/profile/edit" element={<ProfileEditPage />} />
         
       </Routes>
     </BrowserRouter>
