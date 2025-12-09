@@ -49,17 +49,15 @@ const authService = {
     }
   }, 
 
-  // 사용자 정보 조회
-  getProfile: async () => {
-    try {
-      const response = await api.get('/api/v1/user/profile');
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
-  }, 
-
-  // 관리자 - 회원 목록 조회
+  // 사용자 정보 조회
+  getProfile: async () => {
+    try {
+      const response = await api.get('/api/v1/user/me');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },  // 관리자 - 회원 목록 조회
   getUsers: async () => {
       try {
         // 엔드포인트: /api/v1/user/users
@@ -81,30 +79,51 @@ const authService = {
     }
   },
 
-  // 사용자 정보 수정
-  updateProfile: async (userData) => {
-    try {
-      const response = await api.put('/api/v1/user/profile', userData);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
-  }, 
+  // 사용자 정보 수정
+  updateProfile: async (userData) => {
+    try {
+      const response = await api.put('/api/v1/user/profile', userData);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 
-  // 계정 삭제
-  deleteAccount: async () => {
-    try {
-      const response = await api.delete('/api/v1/user/account');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      return response.data;
-    } catch (error) {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      throw error.response?.data || error.message;
-    }
-  },
-};
+  // 닉네임 수정
+  updateNickname: async (userName) => {
+    try {
+      const response = await api.put('/api/v1/user/nickname', { userName });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 
-export default authService;
+  // 비밀번호 수정
+  updatePassword: async (currentPassword, newPassword) => {
+    try {
+      const response = await api.put('/api/v1/user/password', { 
+        currentPassword, 
+        newPassword 
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // 계정 삭제
+  deleteAccount: async () => {
+    try {
+      const response = await api.delete('/api/v1/auth/deleteaccount');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      return response.data;
+    } catch (error) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      throw error.response?.data || error.message;
+    }
+  },
+};export default authService;

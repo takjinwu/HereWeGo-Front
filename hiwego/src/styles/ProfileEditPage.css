@@ -1,0 +1,170 @@
+/* src/styles/ProfileEditPage.css */
+
+/* 전체 컨테이너 및 배경 설정 */
+.profile-edit-page {
+    min-height: calc(100vh - 90px); /* 헤더/푸터 제외 높이 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    /* 이전 대화에서 사용된 배경색 유지 */
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* 주요 수정 내용이 담기는 중앙 박스 */
+.edit-container {
+    background-color: #fff;
+    border: 3px solid #0099cc;
+    border-radius: 12px;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 600px; /* 마이페이지보다 조금 넓게 설정 */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* 페이지 제목 */
+.edit-container h1 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #0099cc;
+    margin: 0 0 35px 0;
+}
+
+/* 섹션 구분선 */
+.edit-container hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 30px 0;
+}
+
+/* 각 섹션 (아이디, 닉네임, 비밀번호, 탈퇴) */
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.profile-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    border-bottom: 2px solid #0099cc;
+    padding-bottom: 5px;
+}
+
+/* 입력 필드 기본 스타일 */
+.profile-section input {
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-section input:focus {
+    border-color: #0099cc;
+    box-shadow: 0 0 8px rgba(0, 153, 204, 0.2);
+}
+
+/* 읽기 전용 (아이디) 스타일 */
+.read-only-input {
+    background-color: #f5f5f5;
+    color: #666;
+}
+
+/* 닉네임 수정 섹션: 입력 필드와 버튼을 한 줄에 배치 */
+.input-with-button {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.input-with-button input {
+    flex-grow: 1;
+}
+
+.input-with-button button {
+    padding: 12px 18px;
+    border: 1px solid #a8c5ff;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #e6f0ff;
+    color: #333;
+    white-space: nowrap;
+}
+
+.input-with-button button:hover {
+    background-color: #a8c5ff;
+}
+
+/* 닉네임 '저장' 버튼 */
+.save-btn {
+    background-color: #0099cc !important;
+    color: white !important;
+    border-color: #0088bb !important;
+}
+.save-btn:hover {
+    background-color: #0077aa !important;
+}
+
+
+/* 비밀번호 변경 버튼 */
+.change-pw-btn {
+    padding: 14px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #64B5F6; /* 파란색 계열 */
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.change-pw-btn:hover {
+    background-color: #42a5f5;
+}
+
+/* 회원 탈퇴 버튼 */
+.delete-section {
+    align-items: flex-start;
+}
+
+.delete-btn {
+    padding: 14px 20px;
+    margin-top: 10px;
+    border: 2px solid #ff6b6b;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #fff5f5;
+    color: #ff6b6b;
+    transition: all 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+/* 오류 메시지 */
+.error-message {
+    color: #ff3b30;
+    background-color: #ffebeb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 14px;
+}
