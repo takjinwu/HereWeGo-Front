@@ -12,7 +12,7 @@ const REGIONS = [
   { name: '충청권', emoji: '🌾' },
   { name: '전라권', emoji: '🏞️' },
   { name: '경상권', emoji: '🏯' },
-  { name: '제주도', emoji: '🏝️' },
+  { name: '제주권', emoji: '🏝️' },
 ];
 
 const RegionPage = () => {
