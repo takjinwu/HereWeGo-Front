@@ -3,10 +3,9 @@ import axios from "axios";
 // src/utils/api.js
 // 개발 환경: 프록시를 통해 /api 사용
 // 프로덕션 환경: 직접 백엔드 URL 사용
-const API_URL = import.meta.env.DEV ? '' : 'https://herewego-backend.onrender.com';
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: 'https://herewego-backend.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },
