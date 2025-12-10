@@ -30,9 +30,14 @@ const ReviewPage = () => {
     // 로그인 유저 확인
     const token = localStorage.getItem('authToken');
     const userInfo = localStorage.getItem('user');
+    console.log('ReviewPage - Token:', token ? 'exists' : 'null');
+    console.log('ReviewPage - UserInfo:', userInfo);
+    
     if (token && userInfo) {
       try {
-        setCurrentUser(JSON.parse(userInfo));
+        const parsedUser = JSON.parse(userInfo);
+        console.log('ReviewPage - Parsed User:', parsedUser);
+        setCurrentUser(parsedUser);
       } catch (e) {
         console.error('유저 정보 파싱 실패:', e);
       }
@@ -41,23 +46,48 @@ const ReviewPage = () => {
     fetchReviews();
   }, []);
 
-  const fetchReviews = async (page = 0) => {
+  const fetchReviews = async (page = 0, sort = sortOption) => {
     try {
       setLoading(true);
       setError(null);
 
-      // 검색 쿼리 구성
-      let search = '';
-      if (searchQuery) {
-        search = `${searchType === 'all' ? '' : searchType}:${searchQuery}`;
-      }
-
-      const data = await reviewService.getReviews(page, 10, sortOption, search);
+      console.log('Fetching reviews - Page:', page, 'Sort:', sort);
+      
+      // 백엔드에서 전체 데이터를 가져옴 (검색은 클라이언트에서 처리)
+      const data = await reviewService.getReviews(page, 10, sort);
+      
       console.log('리뷰 목록 API 응답:', data);
 
-      setReviews(data.content || []);
+      let filteredContent = data.content || [];
+
+      // 검색어가 있으면 클라이언트 사이드 필터링
+      if (searchQuery && searchQuery.trim()) {
+        const query = searchQuery.trim().toLowerCase();
+        console.log('Filtering with query:', query, 'type:', searchType);
+        
+        filteredContent = filteredContent.filter(review => {
+          if (searchType === 'title') {
+            return review.title && review.title.toLowerCase().includes(query);
+          } else if (searchType === 'content') {
+            return review.content && review.content.toLowerCase().includes(query);
+          } else if (searchType === 'nickname') {
+            return review.nickname && review.nickname.toLowerCase().includes(query);
+          } else {
+            // 'all': 제목, 내용, 작성자 모두 검색
+            return (
+              (review.title && review.title.toLowerCase().includes(query)) ||
+              (review.content && review.content.toLowerCase().includes(query)) ||
+              (review.nickname && review.nickname.toLowerCase().includes(query))
+            );
+          }
+        });
+        
+        console.log('Filtered results:', filteredContent.length);
+      }
+
+      setReviews(filteredContent);
       setTotalPages(data.totalPages || 0);
-      setTotalElements(data.totalElements || 0);
+      setTotalElements(filteredContent.length);
       setCurrentPage(data.number || 0);
     } catch (err) {
       setError('리뷰를 불러올 수 없습니다.');
@@ -70,10 +100,12 @@ const ReviewPage = () => {
   const handleWriteReview = () => {
     // 토큰 확인
     const token = localStorage.getItem('authToken');
+    console.log('handleWriteReview - Token:', token ? 'exists' : 'null');
+    console.log('handleWriteReview - CurrentUser:', currentUser);
+    
     if (!token || !currentUser) {
-      // 토스트 메시지 (간단하게 alert 사용, 실제로는 토스트 컴포넌트 사용)
       alert('로그인이 필요합니다.');
-      navigate('/login');
+      navigate('/login', { state: { from: { pathname: '/review' } } });
       return;
     }
     navigate('/review/new');
@@ -88,27 +120,17 @@ const ReviewPage = () => {
   const handleSortChange = (newSort) => {
     setSortOption(newSort);
     setCurrentPage(0);
-    // sort 변경 후 다시 조회
-    setTimeout(() => {
-      fetchReviews(0);
-    }, 0);
+    fetchReviews(0, newSort);
   };
 
   const handlePageChange = (pageNum) => {
     setCurrentPage(pageNum);
-    fetchReviews(pageNum);
+    fetchReviews(pageNum, sortOption);
   };
 
   const handleReviewClick = (reviewId) => {
     navigate(`/review/${reviewId}`);
   };
-
-  // 정렬 옵션 변경이 반영되도록
-  useEffect(() => {
-    if (currentPage === 0) {
-      fetchReviews(0);
-    }
-  }, [sortOption]);
 
   return (
     <Layout>
@@ -187,13 +209,13 @@ const ReviewPage = () => {
                     <div className="review-item-header">
                       <h3 className="review-item-title">{review.title}</h3>
                       <span className="review-item-meta">
-                        <span className="review-author">by {review.nickname}</span>
+                        <span className="review-author">작성자: {review.nickname}</span>
                         <span className="review-views">조회 {review.viewCount}</span>
                       </span>
                     </div>
                     <p className="review-item-content">{review.content}</p>
                     <div className="review-item-footer">
-                      <span className="review-region">📍 {review.region}</span>
+                      <span className="review-region">지역: {review.region || '미지정'}</span>
                       <span className="review-date">
                         {new Date(review.createdAt).toLocaleDateString()}
                       </span>

@@ -29,9 +29,14 @@ const ReviewDetailPage = () => {
     // 로그인 유저 확인
     const token = localStorage.getItem('authToken');
     const userInfo = localStorage.getItem('user');
+    console.log('ReviewDetailPage - Token:', token ? 'exists' : 'null');
+    console.log('ReviewDetailPage - UserInfo:', userInfo);
+    
     if (token && userInfo) {
       try {
-        setCurrentUser(JSON.parse(userInfo));
+        const parsedUser = JSON.parse(userInfo);
+        console.log('ReviewDetailPage - Parsed User:', parsedUser);
+        setCurrentUser(parsedUser);
       } catch (e) {
         console.error('유저 정보 파싱 실패:', e);
       }
@@ -50,9 +55,7 @@ const ReviewDetailPage = () => {
       setReview(reviewData);
 
       // 댓글 조회
-      const commentsData = await reviewService.getComments(reviewId);
-      console.log('댓글 목록 API 응답:', commentsData);
-      setComments(Array.isArray(commentsData) ? commentsData : []);
+      await fetchComments();
     } catch (err) {
       setError('리뷰를 불러올 수 없습니다.');
       console.error('Error fetching review detail:', err);
@@ -61,14 +64,27 @@ const ReviewDetailPage = () => {
     }
   };
 
+  const fetchComments = async () => {
+    try {
+      const commentsData = await reviewService.getComments(reviewId);
+      console.log('댓글 목록 API 응답:', commentsData);
+      setComments(Array.isArray(commentsData) ? commentsData : []);
+    } catch (err) {
+      console.error('Error fetching comments:', err);
+    }
+  };
+
   const handleAddComment = async (e) => {
     e.preventDefault();
 
     // 토큰 확인
     const token = localStorage.getItem('authToken');
+    console.log('handleAddComment - Token:', token ? 'exists' : 'null');
+    console.log('handleAddComment - CurrentUser:', currentUser);
+    
     if (!token || !currentUser) {
       alert('로그인이 필요합니다.');
-      navigate('/login');
+      navigate('/login', { state: { from: { pathname: `/review/${reviewId}` } } });
       return;
     }
 
@@ -81,7 +97,7 @@ const ReviewDetailPage = () => {
       setCommentLoading(true);
       await reviewService.createComment(reviewId, { content: commentContent });
       setCommentContent('');
-      fetchReviewDetail(); // 댓글 목록 새로고침
+      fetchComments(); // 댓글만 새로고침
     } catch (err) {
       console.error('Error creating comment:', err);
       alert('댓글 작성 중 오류가 발생했습니다.');
@@ -105,7 +121,7 @@ const ReviewDetailPage = () => {
       await reviewService.updateComment(commentId, { content: editingCommentContent });
       setEditingCommentId(null);
       setEditingCommentContent('');
-      fetchReviewDetail();
+      fetchComments();
     } catch (err) {
       console.error('Error updating comment:', err);
       alert('댓글 수정 중 오류가 발생했습니다.');
@@ -119,7 +135,7 @@ const ReviewDetailPage = () => {
 
     try {
       await reviewService.deleteComment(commentId);
-      fetchReviewDetail();
+      fetchComments();
     } catch (err) {
       console.error('Error deleting comment:', err);
       alert('댓글 삭제 중 오류가 발생했습니다.');
@@ -236,7 +252,7 @@ const ReviewDetailPage = () => {
                   <button 
                     type="button"
                     className="btn-login-prompt"
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/login', { state: { from: { pathname: `/review/${reviewId}` } } })}
                   >
                     로그인하기
                   </button>

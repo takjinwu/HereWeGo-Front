@@ -37,17 +37,24 @@ const ReviewFormPage = () => {
     // 로그인 유저 확인
     const token = localStorage.getItem('authToken');
     const userInfo = localStorage.getItem('user');
+    console.log('ReviewFormPage - Token:', token ? 'exists' : 'null');
+    console.log('ReviewFormPage - UserInfo:', userInfo);
+    
     if (!token || !userInfo) {
       alert('로그인이 필요합니다.');
-      navigate('/login');
+      const from = reviewId ? `/review/${reviewId}/edit` : '/review/new';
+      navigate('/login', { state: { from: { pathname: from } } });
       return;
     }
 
     try {
-      setCurrentUser(JSON.parse(userInfo));
+      const parsedUser = JSON.parse(userInfo);
+      console.log('ReviewFormPage - Parsed User:', parsedUser);
+      setCurrentUser(parsedUser);
     } catch (e) {
       console.error('유저 정보 파싱 실패:', e);
-      navigate('/login');
+      const from = reviewId ? `/review/${reviewId}/edit` : '/review/new';
+      navigate('/login', { state: { from: { pathname: from } } });
     }
 
     // 수정 모드인 경우 기존 리뷰 데이터 로드
@@ -142,16 +149,6 @@ const ReviewFormPage = () => {
       return;
     }
 
-    if (!formData.region) {
-      alert('지역을 선택하세요.');
-      return;
-    }
-
-    if (!formData.spotContentId) {
-      alert('여행지를 선택하세요.');
-      return;
-    }
-
     try {
       setSubmitLoading(true);
       setError(null);
@@ -231,84 +228,39 @@ const ReviewFormPage = () => {
               </span>
             </div>
 
-            {/* 지역 선택 */}
+            {/* 지역 입력 */}
             <div className="form-group">
               <label htmlFor="region" className="form-label">
-                지역 <span className="required">*</span>
+                지역 (선택사항)
               </label>
-              <select
+              <input
                 id="region"
+                type="text"
                 name="region"
-                className="form-select"
+                className="form-input"
+                placeholder="지역을 입력하세요 (예: 수도권, 강원권)"
                 value={formData.region}
-                onChange={handleRegionChange}
-              >
-                <option value="">지역을 선택하세요</option>
-                {REGIONS.map((region) => (
-                  <option key={region} value={region}>
-                    {region}
-                  </option>
-                ))}
-              </select>
+                onChange={handleInputChange}
+                maxLength="50"
+              />
             </div>
 
-            {/* 여행지 선택 */}
-            {formData.region && (
-              <div className="form-group">
-                <label htmlFor="attraction" className="form-label">
-                  여행지 <span className="required">*</span>
-                </label>
-                <div className="attraction-search-wrapper">
-                  <input
-                    id="attraction"
-                    type="text"
-                    className="form-input"
-                    placeholder="여행지를 검색하세요"
-                    value={attractionSearch}
-                    onChange={(e) =>
-                      handleAttractionSearch(e.target.value)
-                    }
-                    onFocus={() => setShowAttractionDropdown(true)}
-                  />
-
-                  {showAttractionDropdown && (
-                    <div className="attraction-dropdown">
-                      {filteredAttractions.length > 0 ? (
-                        <ul className="attraction-list">
-                          {filteredAttractions.slice(0, 10).map((attraction) => (
-                            <li
-                              key={attraction.contentid || attraction.id}
-                              className="attraction-item"
-                              onClick={() =>
-                                handleAttractionSelect(attraction)
-                              }
-                            >
-                              <div className="attraction-name">
-                                {attraction.title}
-                              </div>
-                              <div className="attraction-address">
-                                {attraction.addr1}
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <div className="attraction-empty">
-                          결과가 없습니다
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {formData.spotContentId && (
-                  <div className="selected-attraction">
-                    <span className="checkmark">✓</span>
-                    {attractionSearch}
-                  </div>
-                )}
-              </div>
-            )}
+            {/* 여행지 입력 */}
+            <div className="form-group">
+              <label htmlFor="spotName" className="form-label">
+                여행지 (선택사항)
+              </label>
+              <input
+                id="spotName"
+                type="text"
+                name="spotContentId"
+                className="form-input"
+                placeholder="여행지 이름을 입력하세요"
+                value={formData.spotContentId}
+                onChange={handleInputChange}
+                maxLength="100"
+              />
+            </div>
 
             {/* 내용 */}
             <div className="form-group">

@@ -2,8 +2,8 @@
 import api from '../utils/api';
 
 const reviewService = {
-  // 리뷰 목록 조회 (페이지네이션, 정렬, 검색)
-  getReviews: async (page = 0, size = 10, sort = 'createdAt,desc', search = '') => {
+  // 리뷰 목록 조회 (페이지네이션, 정렬)
+  getReviews: async (page = 0, size = 10, sort = 'createdAt,desc') => {
     try {
       const params = {
         page,
@@ -11,10 +11,7 @@ const reviewService = {
         sort,
       };
       
-      if (search) {
-        params.search = search;
-      }
-      
+      console.log('Review API params:', params);
       const response = await api.get('/api/v1/reviews', { params });
       return response.data;
     } catch (error) {
