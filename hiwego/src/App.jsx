@@ -10,6 +10,9 @@ import SignupPage from './pages/SignupPage';
 import MyPage from './pages/MyPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import ProfileEditPage from './pages/ProfileEditPage';
+import ReviewPage from './pages/ReviewPage';
+import ReviewDetailPage from './pages/ReviewDetailPage';
+import ReviewFormPage from './pages/ReviewFormPage';
 import AdminPage from './pages/AdminPage';
 
 function App() {
@@ -34,9 +37,17 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/mypage" element={<MyPage />} /> 
+
+        {/* 회원 정보 수정 (편집 화면) 컴포넌트 연결 */}
+        <Route path="/profile/edit" element={<ProfileEditPage />} />
+
+        {/* 리뷰 라우트 */}
+        <Route path="/review" element={<ReviewPage />} />
+        <Route path="/review/new" element={<ReviewFormPage />} />
+        <Route path="/review/:reviewId" element={<ReviewDetailPage />} />
+        <Route path="/review/:reviewId/edit" element={<ReviewFormPage />} />
         <Route path="/profile/edit" element={<ProfileEditPage />} />
         <Route path="/admin" element={<AdminPage />} />
-
         
       </Routes>
     </BrowserRouter>
