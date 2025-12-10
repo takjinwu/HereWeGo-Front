@@ -67,15 +67,33 @@ const ReviewFormPage = () => {
     try {
       setLoading(true);
       const reviewData = await reviewService.getReviewDetail(reviewId);
+      
+      // 작성자 확인
+      const userInfo = localStorage.getItem('user');
+      if (userInfo) {
+        const parsedUser = JSON.parse(userInfo);
+        if (parsedUser.nickname !== reviewData.nickname) {
+          alert('본인이 작성한 리뷰만 수정할 수 있습니다.');
+          navigate(`/review/${reviewId}`);
+          return;
+        }
+      }
+      
       setFormData({
         title: reviewData.title,
         content: reviewData.content,
-        region: reviewData.region,
+        region: reviewData.region || '',
         spotContentId: reviewData.spotContentId || ''
       });
     } catch (err) {
       setError('리뷰 데이터를 불러올 수 없습니다.');
       console.error('Error loading review:', err);
+      
+      // 403 에러 처리
+      if (err.response?.status === 403) {
+        alert('리뷰를 수정할 권한이 없습니다.');
+        navigate('/review');
+      }
     } finally {
       setLoading(false);
     }
@@ -166,7 +184,17 @@ const ReviewFormPage = () => {
       }
     } catch (err) {
       console.error('Error submitting review:', err);
-      setError(err.response?.data?.message || '리뷰 작성 중 오류가 발생했습니다.');
+      
+      // 에러 처리
+      if (err.response?.status === 403) {
+        alert('권한이 없습니다.');
+      } else if (err.response?.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        setError(err.response?.data?.message || err.message || '리뷰 작성 중 오류가 발생했습니다.');
+        alert(err.response?.data?.message || err.message || '리뷰 작성 중 오류가 발생했습니다.');
+      }
     } finally {
       setSubmitLoading(false);
     }

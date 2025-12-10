@@ -20,9 +20,39 @@ const reviewService = {
   },
 
   // 리뷰 상세 조회
-  getReviewDetail: async (reviewId) => {
+  getReviewById: async (id) => {
     try {
-      const response = await api.get(`/api/v1/reviews/${reviewId}`);
+      const response = await api.get(`/api/v1/reviews/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // 리뷰 상세 조회 (별칭)
+  getReviewDetail: async (id) => {
+    try {
+      const response = await api.get(`/api/v1/reviews/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // 리뷰 수정
+  updateReview: async (id, reviewData) => {
+    try {
+      const response = await api.put(`/api/v1/reviews/${id}`, reviewData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // 리뷰 삭제
+  deleteReview: async (id) => {
+    try {
+      const response = await api.delete(`/api/v1/reviews/${id}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
