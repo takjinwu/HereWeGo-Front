@@ -49,11 +49,18 @@ const authService = {
         password,
       });
 
+      console.log('Login response:', response.data);
+
       if (response.data.accessToken) {
         localStorage.setItem('authToken', response.data.accessToken);
+        console.log('Token saved to localStorage');
+        
         // user 정보가 응답에 포함되어 있다면 저장
         if (response.data.user) {
             localStorage.setItem('user', JSON.stringify(response.data.user));
+            console.log('User info saved to localStorage:', response.data.user);
+        } else {
+            console.warn('User info not found in login response');
         }
       }
       return response.data;
