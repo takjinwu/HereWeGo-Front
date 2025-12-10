@@ -15,6 +15,7 @@ import ReviewDetailPage from './pages/ReviewDetailPage';
 import ReviewFormPage from './pages/ReviewFormPage';
 import RecommendPage from './pages/RecommendPage';
 import AdminPage from './pages/AdminPage';
+import TripPlannerPage from './pages/TripPlannerPage';
 
 function App() {
   return (
@@ -50,7 +51,7 @@ function App() {
         
         {/* 맞춤 추천 라우트 */}
         <Route path="/recommend" element={<RecommendPage />} />
-        
+        <Route path="/plan-trip" element={<TripPlannerPage />} />
         <Route path="/profile/edit" element={<ProfileEditPage />} />
         <Route path="/admin" element={<AdminPage />} />      </Routes>
     </BrowserRouter>

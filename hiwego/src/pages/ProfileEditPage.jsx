@@ -29,11 +29,8 @@ const ProfileEditPage = () => {
         const fetchProfile = async () => {
             try {
                 setLoading(true);
-                setError('');
-                console.log('🔵 [프로필 로드 시작] API 호출 중...');
-                
+                setError('');                
                 const data = await authService.getProfile(); 
-                console.log('🟢 [프로필 로드 성공] 응답 데이터:', data);
                 
                 setProfile(data);
                 
@@ -52,7 +49,6 @@ const ProfileEditPage = () => {
                 setError('프로필 정보를 불러오는 데 실패했습니다.');
                 
                 if (err.response?.status === 403 || err.response?.status === 401) {
-                    console.warn('⚠️ 인증 실패 (403/401) -> 로그인 페이지 이동');
                     localStorage.removeItem('authToken');
                     navigate('/login');
                 }

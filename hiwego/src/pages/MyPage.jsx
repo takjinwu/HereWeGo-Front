@@ -103,10 +103,6 @@ const MyPage = () => {
                 <p>{userInfo.password}</p>
               </div>
 
-              <div className="profile-item">
-                <label>선호 지역</label>
-                <p>{userInfo.region}</p>
-              </div>
             </div>
 
             <div className="profile-actions">
