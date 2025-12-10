@@ -1,105 +1,138 @@
-// src/pages/SearchResultsPage.jsx (전체 교체 권장)
-import React, { useEffect, useState } from "react";
-import { useLocation, Link } from "react-router-dom";
-import tourService from "../services/tourService";
-import Layout from "../components/Layout/Layout";
-import "../styles/HomePage.css";
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import Layout from '../components/Layout/Layout';
+import tourService from '../services/tourService';
+import '../styles/SearchResultsPage.css';
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
+const SearchResultsPage = () => {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('query');
+  const navigate = useNavigate();
 
-const PLACEHOLDER = "https://via.placeholder.com/420x260?text=No+Image";
-
-function normalizeItem(item) {
-  if (!item) return { id: null, title: "제목 없음", image: PLACEHOLDER, addr: "" };
-
-  // 가능한 이미지 필드들 우선순위로 시도
-  const image =
-    item.firstimage ||
-    item.image ||
-    item.imageUrl ||
-    item.img ||
-    item.thumbnail ||
-    item.thumb ||
-    (Array.isArray(item.images) && item.images[0]) ||
-    (item.pictures && item.pictures[0]) ||
-    "";
-
-  const title = item.title || item.name || item.placeName || item.facltNm || item.tourName || "";
-  const addr = item.addr1 || item.addr || item.address || item.roadAddr || "";
-
-  // contentId / id 추출
-  const id = item.contentId || item.id || item._id || item.code || null;
-
-  return {
-    id,
-    title: title || "제목 없음",
-    image: image || PLACEHOLDER,
-    addr: addr || ""
-  };
-}
-
-export default function SearchResultsPage() {
-  const q = useQuery().get("query") || "";
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(Boolean(q));
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!q) return;
-    let mounted = true;
-    setLoading(true);
-    setError(null);
+    const fetchSearchResults = async () => {
+      if (!query) return;
 
-    (async () => {
       try {
-        const list = await tourService.getSpotsByKeyword(q);
-        console.log('RAW ITEMS:', list);
-        // normalize
-        const normalized = (list || []).map(normalizeItem);
-        if (!mounted) return;
-        setResults(normalized.slice(0, Math.min(10, normalized.length)));
-      } catch (err) {
-        console.error("검색 중 오류:", err);
-        if (!mounted) return;
-        setError("검색 중 오류가 발생했습니다.");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
+        setLoading(true);
+        setError(null);
+        
+        console.log(`검색어 '${query}'로 API 요청 시작...`);
+        const data = await tourService.getSpotsByKeyword(query);
+        console.log("📌 검색 API 원본 응답:", data);
 
-    return () => { mounted = false; };
-  }, [q]);
+        // ⭐ [핵심] 데이터 구조 유연하게 파싱하기
+        let items = [];
+        
+        // 1. response > body > items > item 경로 체크
+        if (data?.response?.body?.items?.item) {
+          const rawItems = data.response.body.items.item;
+          // 배열이면 그대로, 객체(1개일 때)면 배열로 감싸기
+          items = Array.isArray(rawItems) ? rawItems : [rawItems];
+        } 
+        // 2. 혹은 바로 list 형태로 들어오는 경우 (백엔드 구조에 따라 다름)
+        else if (Array.isArray(data)) {
+          items = data;
+        }
+        else if (data?.list) {
+          items = data.list;
+        }
+
+        console.log("✅ 추출된 최종 목록:", items);
+        setResults(items);
+
+      } catch (err) {
+        console.error("검색 에러:", err);
+        setError("검색 결과를 불러오지 못했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSearchResults();
+  }, [query]);
+
+  const handleItemClick = (item) => {
+    // ⭐ ID 값 찾기 (대소문자 모두 체크)
+    const id = item.contentid || item.contentId || item.id;
+    
+    if (id) {
+        console.log("상세 페이지로 이동 ID:", id);
+        navigate(`/detail/${id}`); 
+    } else {
+        console.error("ID가 없는 아이템:", item);
+        alert("상세 정보를 확인할 수 없는 항목입니다.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div style={{ textAlign: 'center', padding: '100px 0', fontSize: '1.2rem', color: '#666' }}>
+          ⏳ '{query}' 검색 중입니다...
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <div className="home-container">
-        <section className="recommendations-section">
-          <h2 className="section-title">검색 결과: {q}</h2>
-
-          {loading && <div>검색 중...</div>}
-          {error && <div className="error-message">{error}</div>}
-
-          {!loading && !error && results.length === 0 && (
-            <div className="no-data-message">검색 결과가 없습니다.</div>
-          )}
-
-          <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center", marginTop: 20 }}>
-            {results.map((item) => (
-              <Link key={item.id || item.title} to={`/detail/${item.id || item.title}`}>
-                <div style={{ width: 260, borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 6px rgba(0,0,0,0.08)", margin: 6, textAlign: "center", background: "#fff" }}>
-                  <img src={item.image} alt={item.title} style={{ width: "100%", height: 150, objectFit: "cover" }} />
-                  <div style={{ padding: 12 }}>
-                    <div style={{ fontWeight: 700 }}>{item.title}</div>
-                    <div style={{ marginTop: 6, color: "#666", fontSize: 13 }}>{item.addr}</div>
+      <div className="theme-container">
+        <h2 className="theme-title">'{query}' 검색 결과</h2>
+        
+        {error ? (
+           <div className="error-msg" style={{textAlign:'center', color:'red'}}>{error}</div>
+        ) : results.length === 0 ? (
+          <div style={{ textAlign: 'center', color: '#888', padding: '50px 0' }}>
+            검색 결과가 없습니다.
+          </div>
+        ) : (
+          <div className="places-grid">
+            {results.map((item, index) => {
+               // 이미지 주소 찾기 (firstimage, firstimage2 등)
+               const imgSrc = item.firstimage || item.firstimage2 || item.imageUrl;
+               
+               return (
+                <div 
+                  key={index} // ID가 중복되거나 없을 때를 대비해 index 사용
+                  className="place-card"
+                  onClick={() => handleItemClick(item)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="image-wrapper">
+                    {imgSrc ? (
+                      <img src={imgSrc} alt={item.title} />
+                    ) : (
+                      <div className="no-image" style={{
+                          display:'flex', 
+                          justifyContent:'center', 
+                          alignItems:'center', 
+                          height:'100%', 
+                          background:'#eee', 
+                          color:'#aaa'
+                      }}>
+                        이미지 없음
+                      </div>
+                    )}
+                  </div>
+                  <div className="place-info">
+                    <h3 className="place-title">{item.title}</h3>
+                    <p className="place-addr">
+                        {item.addr1 || item.address || "주소 정보 없음"}
+                    </p>
                   </div>
                 </div>
-              </Link>
-            ))}
+               );
+            })}
           </div>
-        </section>
+        )}
       </div>
     </Layout>
   );
-}   
+};
+
+export default SearchResultsPage;

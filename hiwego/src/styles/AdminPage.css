@@ -1,69 +1,110 @@
 /* src/styles/AdminPage.css */
 
 .admin-container {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 0 20px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
 }
 
 .admin-title {
-    text-align: center;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.admin-subtitle {
-    text-align: center;
-    color: #666;
-    margin-bottom: 30px;
-}
-
-.user-table-container {
-    overflow-x: auto;
-}
-
-.user-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.user-table th, .user-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-}
-
-.user-table th {
-    background-color: #f4f4f4;
-    color: #333;
-    font-weight: 600;
-}
-
-.user-table tr:hover {
-    background-color: #f9f9f9;
-}
-
-.admin-delete-btn {
-    background-color: #ff4d4f;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: background-color 0.2s;
-}
-
-.admin-delete-btn:hover {
-    background-color: #d9363e;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 40px;
 }
 
 .error-message {
-    color: red;
-    text-align: center;
-    margin-bottom: 20px;
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #ff4d4f;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 테이블 컨테이너 (카드 형태) */
+.user-table-container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden; /* 둥근 모서리 적용을 위해 */
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* 테이블 헤더 */
+.user-table th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  padding: 16px 20px;
+  font-size: 0.95rem;
+  border-bottom: 2px solid #edf2f7;
+}
+
+/* 테이블 본문 */
+.user-table td {
+  padding: 16px 20px;
+  color: #333;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: middle;
+}
+
+/* 마지막 줄 테두리 제거 */
+.user-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* 마우스 올렸을 때 효과 */
+.user-table tbody tr:hover {
+  background-color: #f1f3f5;
+  transition: background-color 0.2s;
+}
+
+/* ID 컬럼 너비 조정 */
+.user-table th:first-child,
+.user-table td:first-child {
+  width: 80px;
+  text-align: center;
+  color: #868e96;
+}
+
+/* 탈퇴 버튼 컬럼 중앙 정렬 */
+.user-table th:last-child,
+.user-table td:last-child {
+  text-align: center;
+  width: 100px;
+}
+
+/* 탈퇴 버튼 스타일 */
+.admin-delete-btn {
+  background-color: white;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-delete-btn:hover {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+/* 로딩바 */
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #868e96;
 }

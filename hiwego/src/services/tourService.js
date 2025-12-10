@@ -3,10 +3,9 @@
 import api from '../utils/api';
 
 const tourService = {
-  // ⭐ [복구됨] 지역별 관광지 조회 (HomePage에서 사용)
+  // 1. 지역별 관광지 조회
   getSpotsByRegion: async (regionName) => {
     try {
-      // API 명세에 따라 쿼리 파라미터 전송
       const response = await api.get(`/api/v1/tour/regionList?regionName=${encodeURIComponent(regionName)}`);
       return response.data;
     } catch (error) {
@@ -14,7 +13,7 @@ const tourService = {
     }
   },
 
-  // [복구됨] 테마별 관광지 조회
+  // 2. 테마별 관광지 조회
   getSpotsByTheme: async (themeName) => {
     try {
       const response = await api.get(`/api/v1/tour/themeList?themeName=${encodeURIComponent(themeName)}`);
@@ -24,20 +23,21 @@ const tourService = {
     }
   },
 
-  // [복구됨] 검색 기능
-  searchSpots: async (keyword) => {
-      try {
-          const response = await api.get(`/api/v1/tour/search?keyword=${encodeURIComponent(keyword)}`);
-          return response.data;
-      } catch (error) {
-          throw error.response?.data || error.message;
-      }
+  // 3. 키워드 검색 (함수명 수정됨: searchSpots -> getSpotsByKeyword)
+  getSpotsByKeyword: async (keyword) => {
+    try {
+      // 백엔드 파라미터가 query라고 하셨으므로 그대로 유지
+      const response = await api.get(`/api/v1/tour/search/keyword?query=${encodeURIComponent(keyword)}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 
-  // 상세 정보 조회 (DetailPage 사용)
+  // 4. 상세 정보 조회
   getTourDetail: async (contentId) => {
     try {
-      const response = await api.get(`/api/v1/tour/detail/${contentId}`);
+      const response = await api.get(`/api/v1/tour/detail/common?contentId=${contentId}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

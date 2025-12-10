@@ -272,4 +272,127 @@
     padding: 32px 16px;
     font-size: 14px;
   }
+  .places-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* 카드 본체 디자인 */
+.place-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden; /* 이미지가 둥근 모서리를 넘지 않게 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* 높이 균일하게 */
+}
+
+/* 마우스 올렸을 때 효과 */
+.place-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* 이미지 래퍼 */
+.image-wrapper {
+  width: 100%;
+  height: 200px; /* 높이 고정 */
+  background-color: #f0f3f7;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 이미지 스타일 */
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 찌그러짐 방지 */
+  transition: transform 0.5s ease;
+}
+
+/* 호버 시 이미지 확대 효과 */
+.place-card:hover .image-wrapper img {
+  transform: scale(1.05);
+}
+
+/* 이미지가 없을 때 */
+.no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e2e8f0;
+  color: #a0aec0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 텍스트 정보 영역 */
+.place-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* 카드 높이 꽉 채우기 */
+  background: white;
+}
+
+/* 장소 제목 */
+.place-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+  
+  /* 말줄임표 처리 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 주소 텍스트 */
+.place-addr {
+  font-size: 14px;
+  color: #718096;
+  margin: 0;
+  line-height: 1.5;
+  
+  /* 2줄 넘어가면 말줄임표 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 검색 결과 에러 메시지 스타일 */
+.error-msg {
+  text-align: center;
+  color: #e53e3e; /* 빨간색 계열 */
+  padding: 40px;
+  background: #fff5f5;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+/* [추가] 모바일 반응형 보정 (기존 미디어 쿼리와 별도로 추가) */
+@media (max-width: 768px) {
+  .places-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* 모바일 1열 */
+    gap: 16px;
+  }
+  
+  .place-title {
+    font-size: 16px;
+  }
+  
+  .image-wrapper {
+    height: 180px; /* 모바일에서 이미지 높이 약간 줄임 */
+  }
+}
 }
