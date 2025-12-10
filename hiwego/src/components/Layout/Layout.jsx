@@ -187,7 +187,7 @@ const Layout = ({ children }) => {
       </main>
 
       <footer className="app-footer">
-        <p>&copy; 2024 HereWeGo. 모든 권리 보유.</p>
+        <p>&copy; 2025 HereWeGo. All rights reserved.</p>
       </footer>
     </div>
   );

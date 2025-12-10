@@ -65,18 +65,26 @@ const RegionDetailPage = () => {
                 <button onClick={() => navigate('/region')}>지역 목록으로 돌아가기</button>
               </div>
             ) : attractions.length > 0 ? (
-              <div className="attractions-grid">
-                {attractions.map((attraction, index) => {
-                  const key = attraction.contentId || attraction.id || index;
-                  return (
-                    <AttractionCard
-                      key={key}
-                      attraction={attraction}
-                      onClick={() => navigate(`/detail/${attraction.contentId || attraction.id}`)}
-                    />
-                  );
-                })}
-              </div>
+              <>
+                <div className="attractions-grid">
+                  {currentAttractions.map((attraction, index) => {
+                    const key = attraction.contentId || attraction.id || index;
+                    return (
+                      <AttractionCard
+                        key={key}
+                        attraction={attraction}
+                        onClick={() => navigate(`/detail/${attraction.contentId || attraction.id}`)}
+                      />
+                    );
+                  })}
+                </div>
+                
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </>
             ) : (
               <div className="no-data-message">
                 <p>{decodedRegionName}의 여행지 정보가 없습니다.</p>

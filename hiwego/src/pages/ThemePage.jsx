@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
 import AttractionCard from '../components/AttractionCard/AttractionCard';
+import Pagination from '../components/Pagination/Pagination';
 import attractionService from '../services/attractionService';
 import '../styles/ThemePage.css';
 
@@ -22,10 +23,13 @@ const ThemePage = () => {
   const [attractions, setAttractions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   // 선택된 테마의 여행지 조회
   useEffect(() => {
     if (selectedTheme) {
+      setCurrentPage(1); // 테마 변경시 페이지 리셋
       const fetchAttractions = async () => {
         try {
           setLoading(true);
@@ -101,6 +105,17 @@ const ThemePage = () => {
     }
   }, [selectedTheme]);
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(attractions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentAttractions = attractions.slice(startIndex, endIndex);
+
   return (
     <Layout>
       <div className="theme-page">
@@ -134,8 +149,9 @@ const ThemePage = () => {
                 <p>{error}</p>
               </div>
             ) : attractions.length > 0 ? (
-              <div className="attractions-grid">
-                {attractions.map((attraction, index) => {
+              <>
+                <div className="attractions-grid">
+                  {currentAttractions.map((attraction, index) => {
                   const key = `${selectedTheme}-${index}`;
                   return (
                     <AttractionCard
@@ -149,7 +165,13 @@ const ThemePage = () => {
                     />
                   );
                 })}
-              </div>
+                </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </>
             ) : (
               <div className="theme-empty">
                 <p>{selectedTheme}의 여행지 정보가 없습니다.</p>

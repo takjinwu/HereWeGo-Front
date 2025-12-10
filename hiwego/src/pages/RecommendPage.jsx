@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
+import Pagination from '../components/Pagination/Pagination';
 import attractionService from '../services/attractionService';
 import '../styles/RecommendPage.css';
 
@@ -12,6 +13,8 @@ const RecommendPage = () => {
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   // 해시태그 카테고리별 분류
   const hashtagCategories = [
@@ -116,6 +119,7 @@ const RecommendPage = () => {
       console.log('추천 여행지 API 응답:', data);
       setRecommendations(Array.isArray(data) ? data : []);
       setShowResults(true);
+      setCurrentPage(1); // 새로운 검색시 1페이지로 초기화
     } catch (error) {
       console.error('추천 여행지 조회 실패:', error);
       alert('추천 여행지를 불러오는데 실패했습니다.');
@@ -128,11 +132,23 @@ const RecommendPage = () => {
     setSelectedHashtags([]);
     setRecommendations([]);
     setShowResults(false);
+    setCurrentPage(1);
   };
 
   const handleAttractionClick = (contentId) => {
     navigate(`/detail/${contentId}`);
   };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(recommendations.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentRecommendations = recommendations.slice(startIndex, endIndex);
 
   if (showResults) {
     return (
@@ -169,40 +185,48 @@ const RecommendPage = () => {
                     <p>다른 해시태그를 선택해보세요.</p>
                   </div>
                 ) : (
-                  <div className="recommendations-grid">
-                    {recommendations.map((attraction) => (
-                      <div 
-                        key={attraction.contentId} 
-                        className="recommendation-card"
-                        onClick={() => handleAttractionClick(attraction.contentId)}
-                      >
-                        <div className="card-image">
-                          {attraction.firstImage ? (
-                            <img 
-                              src={attraction.firstImage} 
-                              alt={attraction.title}
-                              onError={(e) => {
-                                e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
-                              }}
-                            />
-                          ) : (
-                            <div className="no-image">이미지 없음</div>
-                          )}
+                  <>
+                    <div className="recommendations-grid">
+                      {currentRecommendations.map((attraction) => (
+                        <div 
+                          key={attraction.contentId} 
+                          className="recommendation-card"
+                          onClick={() => handleAttractionClick(attraction.contentId)}
+                        >
+                          <div className="card-image">
+                            {attraction.firstImage ? (
+                              <img 
+                                src={attraction.firstImage} 
+                                alt={attraction.title}
+                                onError={(e) => {
+                                  e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+                                }}
+                              />
+                            ) : (
+                              <div className="no-image">이미지 없음</div>
+                            )}
+                          </div>
+                          <div className="card-content">
+                            <h3 className="card-title">{attraction.title}</h3>
+                            <p className="card-address">{attraction.address}</p>
+                            {attraction.tag && (
+                              <div className="card-tags">
+                                {attraction.tag.split(',').slice(0, 3).map((tag, idx) => (
+                                  <span key={idx} className="card-tag">{tag}</span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="card-content">
-                          <h3 className="card-title">{attraction.title}</h3>
-                          <p className="card-address">{attraction.address}</p>
-                          {attraction.tag && (
-                            <div className="card-tags">
-                              {attraction.tag.split(',').slice(0, 3).map((tag, idx) => (
-                                <span key={idx} className="card-tag">{tag}</span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                    
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                    />
+                  </>
                 )}
               </>
             )}

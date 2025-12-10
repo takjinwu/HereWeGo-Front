@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
 import attractionService from '../services/attractionService';
 import AttractionCard from '../components/AttractionCard/AttractionCard';
+import Pagination from '../components/Pagination/Pagination';
 import '../styles/RegionPage.css';
 
 // 지역 목록 (6개 지역)
@@ -21,6 +22,8 @@ const RegionPage = () => {
   const [attractions, setAttractions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   // 선택된 지역의 여행지 조회
   useEffect(() => {
@@ -48,7 +51,19 @@ const RegionPage = () => {
 
   const handleRegionClick = (regionName) => {
     setSelectedRegion(regionName);
+    setCurrentPage(1);
   };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(attractions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentAttractions = attractions.slice(startIndex, endIndex);
 
   return (
     <Layout>
@@ -83,8 +98,9 @@ const RegionPage = () => {
                 <p>{error}</p>
               </div>
             ) : attractions.length > 0 ? (
-              <div className="attractions-grid">
-                {attractions.map((attraction, index) => {
+              <>
+                <div className="attractions-grid">
+                  {currentAttractions.map((attraction, index) => {
                   // 다양한 필드명 대응 (contentid, contentId, id 등)
                   const contentId = attraction.contentid || attraction.contentId || attraction.id;
                   const key = contentId || index;
@@ -113,7 +129,13 @@ const RegionPage = () => {
                     />
                   );
                 })}
-              </div>
+                </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </>
             ) : (
               <div className="region-empty">
                 <p>이 지역의 여행지 정보가 없습니다.</p>
