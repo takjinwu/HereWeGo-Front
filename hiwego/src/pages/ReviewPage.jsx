@@ -54,7 +54,7 @@ const ReviewPage = () => {
       console.log('Fetching reviews - Page:', page, 'Sort:', sort);
       
       // 백엔드에서 전체 데이터를 가져옴 (검색은 클라이언트에서 처리)
-      const data = await reviewService.getReviews(page, 10, sort);
+      const data = await reviewService.getReviews(page, 6, sort);
       
       console.log('리뷰 목록 API 응답:', data);
 

@@ -73,6 +73,9 @@ body {
   height: 80px;
   width: auto;
   transition: transform 0.3s ease;
+  background-color: white;
+  padding: 5px;
+  border-radius: 8px;
 }
 
 .logo-link:hover .logo-icon {
