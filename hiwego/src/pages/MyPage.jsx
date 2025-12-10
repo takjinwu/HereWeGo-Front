@@ -5,58 +5,51 @@ import authService from '../services/authService';
 import '../styles/MyPage.css';
 
 const MyPage = () => {
-  const navigate = useNavigate();
-  
-  // 로딩 및 오류 상태 추가
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  
-  // ⭐ 초기 사용자 정보 상태 (하드코딩 제거, 빈 값으로 초기화)
-  const [userInfo, setUserInfo] = useState({
-    nickname: '',
-    loginUserId: '',
-    password: '••••••••', // 비밀번호는 항상 마스킹 처리
-    region: '미지정',
-    favorites: []
-  });
+  const navigate = useNavigate();
+  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  const [userInfo, setUserInfo] = useState({
+    nickname: '',
+    loginUserId: '',
+    password: '••••••••', 
+    region: '미지정',
+    favorites: []
+  });
 
-  // ⭐ 1. 컴포넌트 로드 시 사용자 정보 로드 (필수 로직)
-  useEffect(() => {
-    const fetchProfile = async () => {
-        try {
-            setLoading(true);
-            // GET /api/v1/user 엔드포인트를 호출
-            const data = await authService.getProfile(); 
-            
-            console.log('Profile data:', data);
-            
-            setUserInfo({
-                nickname: data.nickname || data.userName || 'N/A',
-                loginUserId: data.loginUserId || data.userDi || data.userId || 'N/A',
-                password: '••••••••',
-                region: data.region || '미지정', 
-                favorites: data.favorites || []
-            });
-            
-        } catch (err) {
-            console.error('Profile load error:', err);
-            console.error('Error response:', err.response);
-            setError('사용자 정보를 불러오는 데 실패했습니다.');
-            
-            // 403 Forbidden 오류 시 로그인 페이지로 리다이렉트 처리
-            if (err.response?.status === 403 || err.response?.status === 401) {
-                localStorage.removeItem('authToken');
-                navigate('/login');
-                return;
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-    fetchProfile();
-  }, [navigate]);  // ⭐ 2. 정보 수정 및 계정 삭제는 전용 페이지로 라우팅 (ProfileEditPage)
+  useEffect(() => {
+    const fetchProfile = async () => {
+        try {
+            setLoading(true);
+            
+            const data = await authService.getProfile(); 
+            
+            setUserInfo({
+                nickname: data.userName || data.nickname || 'N/A', 
+                loginUserId: data.userDi || data.loginUserId || 'N/A', 
+                password: '••••••••',
+                region: data.region || '미지정', 
+                favorites: data.favorites || []
+            });
+            
+        } catch (err) {
+            console.error('Profile load error:', err);
+            setError('회원 정보를 불러올 수 없습니다. 로그아웃 후 다시 로그인해 주세요.');
+            
+            if (err.response?.status === 403 || err.response?.status === 401) {
+                // 403 오류 시 리다이렉트 없이 토큰만 삭제하여 UI를 유지
+                localStorage.removeItem('authToken');
+            }
+            // userInfo는 초기값인 빈 상태를 유지하여 UI에 "N/A" 표시
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchProfile();
+  }, [navigate]);
+
   const handleGoToEdit = () => {
-      // App.jsx에 정의된 /profile/edit 경로 사용
       navigate('/profile/edit'); 
   }
   
@@ -83,15 +76,16 @@ const MyPage = () => {
 
   // 로딩 및 오류 화면
   if (loading) return <Layout><div className="mypage-container"><div className="loading">프로필 로드 중...</div></div></Layout>;
-  if (error) return <Layout><div className="mypage-container"><div className="error-message">{error}</div></div></Layout>;
-
+  
   return (
     <Layout>
       <div className="mypage-container">
         <div className="mypage-box">
           <h1 className="mypage-title">마이페이지</h1> 
 
-          {/* 조회 모드 (isEditing 관련 코드를 제거하여 깔끔하게 만듭니다.) */}
+            {/* 오류 메시지 표시 */}
+            {error && <div className="error-message">{error}</div>}
+
           <div className="profile-view">
             <div className="profile-section">
               <div className="profile-item">
