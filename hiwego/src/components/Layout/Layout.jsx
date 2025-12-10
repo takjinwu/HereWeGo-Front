@@ -4,6 +4,7 @@ import '../../styles/Layout.css';
 
 const baseNavItems = [
   { name: '여행지 추천', path: '/recommend' },
+  { name: '경로 플래너', path: '/plan-trip' },
   { name: '지역별', path: '/region' },
   { name: '테마별', path: '/theme' },
   { name: '여행지 리뷰', path: '/review' },

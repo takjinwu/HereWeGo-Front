@@ -1,0 +1,289 @@
+/* src/styles/TripPlannerPage.css */
+
+.trip-planner-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px 80px;
+    font-family: 'Pretendard', sans-serif;
+    color: #333;
+}
+
+.planner-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    text-align: center;
+    color: #1a202c;
+    margin-bottom: 10px;
+}
+
+.planner-subtitle {
+    font-size: 1rem;
+    text-align: center;
+    color: #718096;
+    margin-bottom: 40px;
+}
+
+/* 입력 섹션 */
+.input-section {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.city-input {
+    flex-grow: 1;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.city-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.recommend-btn {
+    padding: 15px 25px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.recommend-btn:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.recommend-btn:disabled {
+    background-color: #90cdf4;
+    cursor: not-allowed;
+}
+
+.planner-error {
+    color: #e53e3e;
+    text-align: center;
+    padding: 15px;
+    background: #fff5f5;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+/* 지도 시각화 */
+.map-visualization h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #2d3748;
+}
+
+.map-placeholder {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f3f7;
+    color: #a0aec0;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 추천 결과 목록 */
+.results-list {
+    margin-top: 50px;
+}
+
+.results-list h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #2d3748;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 10px;
+}
+
+.spot-list {
+    list-style: none;
+    padding: 0;
+}
+
+.spot-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px 0;
+    border-bottom: 1px solid #edf2f7;
+    gap: 15px;
+}
+
+.spot-number {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 5px;
+}
+
+.spot-details {
+    flex-grow: 1;
+}
+
+.spot-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 5px 0;
+}
+
+.spot-addr, .spot-city {
+    font-size: 0.95rem;
+    color: #718096;
+    margin: 0;
+}
+
+.no-results-text {
+    text-align: center;
+    color: #a0aec0;
+    padding: 40px;
+}
+/* src/styles/TripPlannerPage.css */
+
+/* ... (기존 상단 스타일 유지) ... */
+
+/* 1. Day 선택 섹션 추가 */
+.day-select-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    flex-wrap: wrap; /* 모바일 대응 */
+}
+
+.day-label {
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.day-select {
+    padding: 10px 15px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.day-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: 20px;
+}
+
+.day-tab {
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    background: #f7fafc;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #4a5568;
+    transition: all 0.2s;
+}
+
+.day-tab:hover {
+    background: #edf2f7;
+}
+
+.day-tab.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+    box-shadow: 0 2px 5px rgba(59, 130, 246, 0.3);
+}
+
+/* 2. 지역 선택 드롭다운 영역 */
+.region-select-area {
+    margin-bottom: 30px;
+    padding: 20px 30px;
+    background: #fefefe;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.region-select-area h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+.region-dropdown {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* 3. 현재 경로 요약 */
+.summary-display {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #3b82f6;
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 2px dashed #bbdefb;
+    border-radius: 8px;
+    background: #e3f2fd;
+}
+
+
+/* 4. 추천 버튼 스타일 수정 (크게) */
+.recommend-btn.large {
+    width: 100%;
+    padding: 18px 0;
+    margin-bottom: 40px;
+}
+
+/* ... (기존 하단 스타일 유지) ... */
+
+/* 모바일 대응 */
+@media (max-width: 600px) {
+    .day-select-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .day-tabs {
+        margin-left: 0;
+        margin-top: 15px;
+    }
+    .recommend-btn.large {
+        padding: 15px 0;
+    }
+    .planner-title {
+        font-size: 1.8rem;
+    }
+}
