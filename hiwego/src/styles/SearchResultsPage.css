@@ -1,0 +1,161 @@
+/* src/styles/SearchResultsPage.css */
+
+/* 전체 컨테이너 (상세 페이지와 폰트, 기본 설정 통일) */
+.theme-container {
+  max-width: 1200px; /* 목록은 넓게 보여주기 위해 1200px */
+  margin: 40px auto;
+  padding: 0 20px 80px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #333;
+}
+
+/* 페이지 제목 */
+.theme-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111; /* 상세 페이지 제목 색상과 통일 */
+  margin-bottom: 40px;
+  letter-spacing: -0.5px;
+}
+
+/* 📌 그리드 레이아웃 (카드 배치) */
+.places-grid {
+  display: grid;
+  /* 카드의 최소 너비를 260px로 설정, 화면이 넓어지면 자동 채움 */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+/* 카드 본체 (상세 페이지의 둥근 모서리와 그림자 스타일 계승) */
+.place-card {
+  background: white;
+  border-radius: 12px; /* detail-image-wrapper와 동일한 곡률 */
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 상세 페이지와 동일한 그림자 */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+}
+
+/* 카드 호버 효과 */
+.place-card:hover {
+  transform: translateY(-8px); /* 위로 가볍게 떠오름 */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12); /* 그림자 깊이감 추가 */
+}
+
+/* 이미지 래퍼 */
+.image-wrapper {
+  width: 100%;
+  height: 200px; /* 카드 이미지 높이 고정 */
+  background-color: #f5f5f5; /* 상세 페이지 배경색과 통일 */
+  overflow: hidden;
+  position: relative;
+}
+
+/* 이미지 스타일 */
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease; /* 부드러운 확대 효과 */
+}
+
+/* 호버 시 이미지 확대 (상세 페이지와 동일한 감성) */
+.place-card:hover .image-wrapper img {
+  transform: scale(1.05);
+}
+
+/* 이미지가 없을 때 */
+.no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* 텍스트 정보 영역 */
+.place-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background: white;
+  border-top: 1px solid #eee; /* 이미지와 텍스트 사이 미세한 구분선 */
+}
+
+/* 장소 이름 */
+.place-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+  
+  /* 긴 제목 말줄임표 처리 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 주소 */
+.place-addr {
+  font-size: 0.95rem;
+  color: #666; /* 상세 페이지 본문 색상과 통일 */
+  margin: 0;
+  line-height: 1.5;
+  
+  /* 2줄 넘어가면 말줄임표 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 에러 및 결과 없음 메시지 */
+.error-msg {
+  text-align: center;
+  color: #ff4d4f;
+  padding: 40px;
+  background: #fff2f0;
+  border-radius: 12px;
+  margin-top: 20px;
+  font-weight: 500;
+}
+
+.no-result-msg {
+  text-align: center;
+  padding: 100px 0;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  .theme-container {
+    padding: 30px 15px;
+  }
+
+  .theme-title {
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+  }
+
+  .places-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* 모바일은 1열 */
+    gap: 20px;
+  }
+
+  .image-wrapper {
+    height: 180px;
+  }
+}

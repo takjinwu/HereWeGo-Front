@@ -1,18 +1,26 @@
-// src/pages/DetailPage.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
-import KakaoMap from '../components/KakaoMap/KakaoMap'; // 경로 수정됨
-import tourService from '../services/tourService'; // ⭐ 서비스 임포트 필수
+import KakaoMap from '../components/KakaoMap/KakaoMap';
+import tourService from '../services/tourService';
 import '../styles/DetailPage.css';
 
 const DetailPage = () => {
-  const { id } = useParams(); // URL에서 클릭한 장소의 id를 가져옴
+  // 1. URL에서 :id (예: 3576903)를 가져옵니다.
+  const { id } = useParams(); 
   const navigate = useNavigate();
+  
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+
+  const handleCopyAddress = async (text) => {
+    if (!text) return;
+  
+      await navigator.clipboard.writeText(text);
+      alert('주소가 복사되었습니다! 📋');
+  };
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -20,15 +28,37 @@ const DetailPage = () => {
         setLoading(true);
         setError(null);
 
-        // ⭐ 1. 하드코딩된 더미 데이터 삭제함
-        // ⭐ 2. 실제 API 호출: id(contentId)를 이용해 서버에 요청
-        const data = await tourService.getTourDetail(id);
+        // ⭐ [핵심 수정] URL에서 가져온 id를 백엔드가 원하는 contentId 변수에 담습니다.
+        const contentId = id; 
         
-        console.log("상세 정보 데이터:", data); // 데이터 구조 확인용 로그
+        console.log("백엔드로 보낼 contentId:", contentId);
 
-        // 백엔드 응답 구조에 따라 data.response.body.items.item[0] 등 경로가 다를 수 있음
-        // 만약 data가 바로 객체라면 setItem(data);
-        setItem(data); 
+        // 2. 서비스 호출 (이제 contentId가 들어갑니다)
+        const data = await tourService.getTourDetail(contentId);
+        
+        console.log("API 응답 원본:", data); 
+
+        // ⭐ 3. 데이터 껍질 까기 (공공데이터 구조: response -> body -> items -> item)
+        let targetItem = null;
+
+        // 데이터가 깊숙이 숨겨져 있으므로 안전하게 꺼냅니다.
+        if (data?.response?.body?.items?.item) {
+           const rawItem = data.response.body.items.item;
+           
+           // item이 배열([...])이면 첫 번째 것, 객체({...})면 그대로 사용
+           targetItem = Array.isArray(rawItem) ? rawItem[0] : rawItem;
+        } else if (data?.response?.body?.items) {
+           // 가끔 구조가 다를 때를 대비
+           targetItem = data.response.body.items;
+        }
+
+        if (targetItem) {
+          console.log("화면에 뿌릴 최종 데이터:", targetItem);
+          setItem(targetItem); 
+        } else {
+          console.error("데이터 구조를 찾을 수 없음:", data);
+          // 데이터가 없어도 에러 띄우지 않고 빈 화면 방지
+        }
 
       } catch (err) {
         console.error("상세 정보 로드 실패:", err);
@@ -67,7 +97,7 @@ const DetailPage = () => {
           ← 돌아가기
         </button>
 
-        {/* 메인 이미지 (필드명 확인 필요: firstimage, firstimage2 등) */}
+        {/* 메인 이미지 */}
         {item.firstimage && (
           <div className="detail-image-wrapper">
             <img src={item.firstimage} alt={item.title} className="detail-image" />
@@ -79,8 +109,14 @@ const DetailPage = () => {
           
           <div className="detail-info-group">
             <h3 className="info-label">주소</h3>
-            {/* ⭐ 실제 주소 데이터 필드명 사용 (addr1, address 등) */}
+            {/* addr1이 없으면 address라도 보여주도록 처리 */}
             <p className="info-content">{item.addr1 || item.address || "주소 정보 없음"}</p>
+          <button 
+                  className="copy-btn"
+                  onClick={() => handleCopyAddress(item.addr1 || item.address)}
+                >
+                  복사
+          </button>
           </div>
 
           {item.tel && (
@@ -93,8 +129,11 @@ const DetailPage = () => {
           {item.homepage && (
             <div className="detail-info-group">
               <h3 className="info-label">홈페이지</h3>
-              {/* HTML 태그가 포함될 수 있으므로 단순 렌더링 또는 파싱 필요 */}
-              <div className="info-content" dangerouslySetInnerHTML={{ __html: item.homepage }} />
+              {/* HTML 태그 제거 및 렌더링 */}
+              <div 
+                className="info-content" 
+                dangerouslySetInnerHTML={{ __html: item.homepage }} 
+              />
             </div>
           )}
         </div>
@@ -104,11 +143,11 @@ const DetailPage = () => {
         {item.overview && (
           <div className="detail-section">
             <h3>소개</h3>
-            <p className="detail-overview">{item.overview}</p>
+            <p className="detail-overview">{item.overview.replace(/<br\s*\/?>/gi, '\n')}</p>
           </div>
         )}
 
-        {/* ⭐ 지도 영역: 실제 주소(addr1)가 들어가면 지도가 해당 위치로 뜹니다 */}
+        {/* 지도 영역 */}
         <div className="detail-section map-section">
           <h3>위치 확인하기</h3>
           {(item.addr1 || item.address) ? (
