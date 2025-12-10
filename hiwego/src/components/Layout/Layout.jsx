@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../../styles/Layout.css';
 
 const baseNavItems = [
-  { name: '여행지 추천', path: '/' },
+  { name: '여행지 추천', path: '/recommend' },
   { name: '지역별', path: '/region' },
   { name: '테마별', path: '/theme' },
   { name: '여행지 리뷰', path: '/review' },
