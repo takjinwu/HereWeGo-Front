@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { TripProvider } from './context/TripContext';
+import TripPlanner from './components/TripPlanner/TripPlanner';
 import HomePage from './pages/HomePage';
 import RegionPage from './pages/RegionPage';
 import RegionDetailPage from './pages/RegionDetailPage'; 
@@ -19,42 +21,46 @@ import TripPlannerPage from './pages/TripPlannerPage';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchResultsPage />} />
-        
-        {/* 지역별 라우트 */}
-        <Route path="/region" element={<RegionPage />} />
-        <Route path="/region/:regionName" element={<RegionDetailPage />} />
-        
-        {/* 테마별 라우트 */}
-        <Route path="/theme" element={<ThemePage />} />
-        <Route path="/theme/:themeName" element={<ThemeDetailPage />} /> 
+    <TripProvider>
+      <BrowserRouter>
+        <TripPlanner />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/search" element={<SearchResultsPage />} />
+          
+          {/* 지역별 라우트 */}
+          <Route path="/region" element={<RegionPage />} />
+          <Route path="/region/:regionName" element={<RegionDetailPage />} />
+          
+          {/* 테마별 라우트 */}
+          <Route path="/theme" element={<ThemePage />} />
+          <Route path="/theme/:themeName" element={<ThemeDetailPage />} /> 
 
-        {/* 상세 페이지 라우트 */}
-        <Route path="/detail/:id" element={<DetailPage />} />
-        
-        {/* 인증 라우트 */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/mypage" element={<MyPage />} /> 
+          {/* 상세 페이지 라우트 */}
+          <Route path="/detail/:id" element={<DetailPage />} />
+          
+          {/* 인증 라우트 */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/mypage" element={<MyPage />} /> 
 
-        {/* 회원 정보 수정 (편집 화면) 컴포넌트 연결 */}
-        <Route path="/profile/edit" element={<ProfileEditPage />} />
+          {/* 회원 정보 수정 (편집 화면) 컴포넌트 연결 */}
+          <Route path="/profile/edit" element={<ProfileEditPage />} />
 
-        {/* 리뷰 라우트 */}
-        <Route path="/review" element={<ReviewPage />} />
-        <Route path="/review/new" element={<ReviewFormPage />} />
-        <Route path="/review/:reviewId" element={<ReviewDetailPage />} />
-        <Route path="/review/:reviewId/edit" element={<ReviewFormPage />} />
+          {/* 리뷰 라우트 */}
+          <Route path="/review" element={<ReviewPage />} />
+          <Route path="/review/new" element={<ReviewFormPage />} />
+          <Route path="/review/:reviewId" element={<ReviewDetailPage />} />
+          <Route path="/review/:reviewId/edit" element={<ReviewFormPage />} />
         
         {/* 맞춤 추천 라우트 */}
         <Route path="/recommend" element={<RecommendPage />} />
         <Route path="/plan-trip" element={<TripPlannerPage />} />
         <Route path="/profile/edit" element={<ProfileEditPage />} />
-        <Route path="/admin" element={<AdminPage />} />      </Routes>
+        <Route path="/admin" element={<AdminPage />} />
+      </Routes>
     </BrowserRouter>
+  </TripProvider>
   );
 }
 

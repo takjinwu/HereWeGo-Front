@@ -91,6 +91,14 @@ const RegionPage = () => {
 
           {/* 여행지 카드 섹션 */}
           <div className="region-attractions">
+            {/* 드래그 힌트 */}
+            {attractions.length > 0 && (
+              <div className="drag-hint">
+                <span>💡</span>
+                여행지 카드를 드래그하여 오른쪽 여행 일정에 추가할 수 있습니다!
+              </div>
+            )}
+            
             {loading ? (
               <div className="region-loading">여행지 정보를 불러오는 중입니다...</div>
             ) : error ? (

@@ -3,10 +3,28 @@ import React from 'react';
 
 const AttractionCard = ({ attraction, onClick }) => {
   // 필드명이 여러 가지일 수 있으므로 대체 필드 제공
-  const imageUrl = attraction.firstimage || attraction.image || attraction.imageUrl || '';
+  const imageUrl = attraction.firstimage || attraction.image || attraction.imageUrl || attraction.firstImage || '';
   const title = attraction.title || attraction.name || '';
   const address = attraction.addr1 || attraction.address || '';
   const category = attraction.cat3 || attraction.category || '';
+  const contentId = attraction.contentid || attraction.contentId || attraction.id || '';
+
+  // 드래그 시작 핸들러
+  const handleDragStart = (e) => {
+    const placeData = {
+      placeId: contentId ? `CONTENT_${contentId}` : `PLACE_${Date.now()}`,
+      placeName: title,
+      address: address,
+      image: imageUrl
+    };
+    e.dataTransfer.setData('application/json', JSON.stringify(placeData));
+    e.dataTransfer.effectAllowed = 'copy';
+    e.currentTarget.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e) => {
+    e.currentTarget.style.opacity = '1';
+  };
 
   return (
     <div 
@@ -16,11 +34,14 @@ const AttractionCard = ({ attraction, onClick }) => {
         overflow: 'hidden',
         padding: '0', 
         width: '100%', 
-        cursor: 'pointer',
+        cursor: 'grab',
         backgroundColor: '#fff',
         transition: 'transform 0.2s, box-shadow 0.2s'
       }}
       onClick={onClick}
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-4px)';
         e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';

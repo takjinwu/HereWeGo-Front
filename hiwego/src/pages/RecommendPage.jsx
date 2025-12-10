@@ -186,12 +186,33 @@ const RecommendPage = () => {
                   </div>
                 ) : (
                   <>
+                    {/* 드래그 힌트 */}
+                    <div className="drag-hint">
+                      <span>💡</span>
+                      여행지 카드를 드래그하여 오른쪽 여행 일정에 추가할 수 있습니다!
+                    </div>
+                    
                     <div className="recommendations-grid">
                       {currentRecommendations.map((attraction) => (
                         <div 
                           key={attraction.contentId} 
                           className="recommendation-card"
                           onClick={() => handleAttractionClick(attraction.contentId)}
+                          draggable
+                          onDragStart={(e) => {
+                            const placeData = {
+                              placeId: `CONTENT_${attraction.contentId}`,
+                              placeName: attraction.title,
+                              address: attraction.address,
+                              image: attraction.firstImage
+                            };
+                            e.dataTransfer.setData('application/json', JSON.stringify(placeData));
+                            e.dataTransfer.effectAllowed = 'copy';
+                            e.currentTarget.style.opacity = '0.5';
+                          }}
+                          onDragEnd={(e) => {
+                            e.currentTarget.style.opacity = '1';
+                          }}
                         >
                           <div className="card-image">
                             {attraction.firstImage ? (
