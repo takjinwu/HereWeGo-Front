@@ -1,5 +1,3 @@
-// src/pages/ProfileEditPage.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
@@ -9,42 +7,52 @@ import '../styles/ProfileEditPage.css';
 const ProfileEditPage = () => {
     const navigate = useNavigate();
     const [profile, setProfile] = useState({});
+    
+    // 프론트엔드 상태 관리
     const [formData, setFormData] = useState({
-        userDi: '', // 아이디 (읽기 전용)
-        userName: '', // 닉네임
+        userDi: '', 
+        nickname: '', 
         currentPassword: '',
         newPassword: '',
         confirmNewPassword: '',
     });
+    
     const [deletePassword, setDeletePassword] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [isEditMode, setIsEditMode] = useState(false); // 닉네임 수정 모드
+    const [isEditMode, setIsEditMode] = useState(false);
 
-    // 비밀번호 정규식 (8자 이상, 영문/숫자/특수문자 중 2가지 이상 조합 가정)
     const PASSWORD_COMPLEXITY_REGEX = /^(?=.*[A-Za-z])(?=.*\d|.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
-    // 1. 사용자 프로필 정보 로드 (마이페이지 진입 시 실행)
+    // 1. 사용자 프로필 정보 로드 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 setLoading(true);
                 setError('');
-                // '자신 정보 조회' API 호출: GET /api/v1/user/me
+                console.log('🔵 [프로필 로드 시작] API 호출 중...');
+                
                 const data = await authService.getProfile(); 
+                console.log('🟢 [프로필 로드 성공] 응답 데이터:', data);
                 
                 setProfile(data);
+                
                 setFormData(prev => ({
                     ...prev,
-                    // ⭐ 백엔드 파라미터: 아이디(userDi), 닉네임(userName) 사용
-                    userDi: data.loginUserId || data.userId || data.loginUserId || '', 
-                    userName: data.userName || data.nickname || '',
+                    userDi: data.loginUserId || data.userId || data.userDi || '', 
+                    nickname: data.userName || data.nickname || '', 
                 }));
+                console.log('🔹 [상태 초기화 완료] formData:', {
+                    userDi: data.loginUserId || data.userId || data.userDi || '', 
+                    nickname: data.userName || data.nickname || ''
+                });
+
             } catch (err) {
+                console.error('🔴 [프로필 로드 실패]:', err);
                 setError('프로필 정보를 불러오는 데 실패했습니다.');
-                console.error('Profile load error:', err);
+                
                 if (err.response?.status === 403 || err.response?.status === 401) {
-                    // 토큰 만료 시 로그인 페이지로 리다이렉트
+                    console.warn('⚠️ 인증 실패 (403/401) -> 로그인 페이지 이동');
                     localStorage.removeItem('authToken');
                     navigate('/login');
                 }
@@ -65,21 +73,39 @@ const ProfileEditPage = () => {
     const handleNicknameUpdate = async (e) => {
         e.preventDefault();
         setError('');
-        // ⭐ 백엔드 파라미터 'userName' 사용
-        if (formData.userName === (profile.userName || profile.nickname)) { 
+        
+        const currentNickname = profile.userName || profile.nickname;
+        console.log(`🔸 [닉네임 수정 시도] 입력값: "${formData.nickname}", 기존값: "${currentNickname}"`);
+
+        if (formData.nickname === currentNickname) { 
+            console.log('🚫 [중단] 닉네임 변경사항 없음');
             setError('닉네임을 변경해야 저장할 수 있습니다.');
             return;
         }
+
+        if (!isEditMode) {
+             return; 
+        }
         
         try {
-            // ⭐ 닉네임 변경 API: PUT /api/v1/user/nickname
-            await authService.updateNickname(formData.userName); 
+            const apiPayload = { newNickname: formData.nickname };
+            console.log('🚀 [API 전송] updateNickname 요청:', apiPayload);
+
+            const response = await authService.updateNickname(apiPayload); 
+            console.log('✅ [API 성공] 응답:', response);
+            
             alert('닉네임이 성공적으로 변경되었습니다.');
-            setProfile(prev => ({ ...prev, userName: formData.userName, nickname: formData.userName })); 
-            setIsEditMode(false);
+            
+            setProfile(prev => ({ 
+                ...prev, 
+                nickname: formData.nickname,
+                userName: formData.nickname 
+            })); 
+            setIsEditMode(false); 
         } catch (err) {
+            console.error('🔴 [닉네임 수정 실패]:', err);
             setError('닉네임 변경에 실패했습니다. (중복, 서버 오류 등)');
-            console.error('Nickname update error:', err);
+            setIsEditMode(true); 
         }
     };
 
@@ -87,6 +113,7 @@ const ProfileEditPage = () => {
     const handlePasswordUpdate = async (e) => {
         e.preventDefault();
         setError('');
+        console.log('🔸 [비밀번호 변경 시도]');
 
         if (!formData.currentPassword || !formData.newPassword || !formData.confirmNewPassword) {
             setError('모든 비밀번호 필드를 채워주세요.');
@@ -102,17 +129,18 @@ const ProfileEditPage = () => {
         }
 
         try {
-            // ⭐ 비밀번호 변경 API: PUT /api/v1/user/password
+            console.log('🚀 [API 전송] updatePassword 요청');
             await authService.updatePassword(formData.currentPassword, formData.newPassword); 
+            console.log('✅ [API 성공] 비밀번호 변경 완료');
+            
             alert('비밀번호가 성공적으로 변경되었습니다. 다시 로그인해주세요.');
             
-            // 변경 후 로그아웃 처리
             localStorage.removeItem('authToken');
             navigate('/login');
             
         } catch (err) {
+            console.error('🔴 [비밀번호 변경 실패]:', err);
             setError('비밀번호 변경에 실패했습니다. 현재 비밀번호를 확인해주세요.');
-            console.error('Password update error:', err);
         }
     };
 
@@ -128,16 +156,29 @@ const ProfileEditPage = () => {
         }
 
         try {
-            // ⭐ 계정 삭제 API: DELETE /api/v1/user/account
+            console.log('🚀 [API 전송] deleteAccount 요청');
             await authService.deleteAccountWithPassword(deletePassword); 
+            console.log('✅ [API 성공] 회원 탈퇴 완료');
+            
             alert('계정 삭제가 완료되었습니다. 이용해주셔서 감사합니다.');
             localStorage.clear(); 
             navigate('/'); 
         } catch (err) {
+            console.error('🔴 [회원 탈퇴 실패]:', err);
             setError('회원 탈퇴에 실패했습니다. 비밀번호를 확인해주세요.');
-            console.error('Delete account error:', err);
         }
     };
+    
+    // 닉네임 수정 취소
+    const handleCancelEdit = () => {
+        console.log('🔹 [취소] 닉네임 수정 취소');
+        setFormData(prev => ({
+            ...prev,
+            nickname: profile.userName || profile.nickname || ''
+        }));
+        setIsEditMode(false);
+        setError('');
+    }
 
     if (loading) return <Layout><div className="loading">프로필 로드 중...</div></Layout>;
 
@@ -148,27 +189,30 @@ const ProfileEditPage = () => {
                     <h1>회원 정보 수정</h1>
                     {error && <p className="error-message">{error}</p>}
                     
-                    {/* 1. 아이디 (읽기 전용 - userDi) */}
+                    {/* 1. 아이디 */}
                     <div className="profile-section">
                         <h3>아이디</h3>
                         <input type="text" value={formData.userDi} readOnly className="read-only-input" />
                     </div>
 
-                    {/* 2. 닉네임 수정 (userName) */}
+                    {/* 2. 닉네임 수정 */}
                     <form onSubmit={handleNicknameUpdate} className="profile-section">
                         <h3>닉네임 수정</h3>
                         <div className="input-with-button">
                             <input
                                 type="text"
-                                name="userName"
-                                value={formData.userName}
+                                name="nickname"
+                                value={formData.nickname}
                                 onChange={handleChange}
                                 readOnly={!isEditMode}
                                 required
                             />
-                            <button type="button" onClick={() => setIsEditMode(!isEditMode)}>
-                                {isEditMode ? '수정 취소' : '수정'}
-                            </button>
+                            {isEditMode ? (
+                                <button type="button" onClick={handleCancelEdit}>수정 취소</button>
+                            ) : (
+                                <button type="button" onClick={() => setIsEditMode(true)}>수정</button>
+                            )}
+
                             {isEditMode && (
                                 <button type="submit" className="save-btn">저장</button>
                             )}
@@ -177,7 +221,7 @@ const ProfileEditPage = () => {
 
                     <hr />
 
-                    {/* 3. 비밀번호 변경 (userPw) */}
+                    {/* 3. 비밀번호 변경 */}
                     <form onSubmit={handlePasswordUpdate} className="profile-section">
                         <h3>비밀번호 변경</h3>
                         <input
