@@ -1,0 +1,540 @@
+/* src/components/TripPlanner/TripPlanner.css */
+
+/* 토글 버튼 */
+.trip-toggle-btn {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+}
+
+.trip-toggle-btn:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.trip-toggle-btn.open {
+  right: 420px;
+  padding: 12px;
+  border-radius: 50%;
+  background: #e74c3c;
+}
+
+.toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* 사이드 패널 */
+.trip-planner-panel {
+  position: fixed;
+  right: -420px;
+  top: 0;
+  width: 400px;
+  height: 100vh;
+  background: #f8f9fa;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: right 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.trip-planner-panel.open {
+  right: 0;
+}
+
+/* 패널 헤더 */
+.panel-header {
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.editing-badge {
+  background: #ffc107;
+  color: #333;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 로그인 필요 */
+.login-required {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.login-required p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.login-link {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+
+.login-link:hover {
+  transform: scale(1.05);
+}
+
+/* 내 여행 섹션 */
+.my-trips-section {
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+}
+
+.my-trips-toggle {
+  width: 100%;
+  padding: 10px 15px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.2s;
+}
+
+.my-trips-toggle:hover {
+  background: #e5e5e5;
+}
+
+.my-trips-list {
+  margin-top: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.my-trip-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.my-trip-item:hover {
+  background: #e8f4fd;
+}
+
+.trip-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trip-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.trip-date {
+  font-size: 12px;
+  color: #888;
+}
+
+.delete-trip-btn {
+  padding: 6px 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-trip-btn:hover {
+  opacity: 1;
+}
+
+.no-trips, .loading-text {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+  font-size: 14px;
+}
+
+/* 여행 제목 입력 */
+.trip-title-section {
+  padding: 15px 20px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.trip-title-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: border-color 0.2s;
+}
+
+.trip-title-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.trip-title-input::placeholder {
+  color: #aaa;
+  font-weight: 400;
+}
+
+/* 날짜 선택 */
+.date-section {
+  display: flex;
+  gap: 15px;
+  padding: 15px 20px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.date-picker {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.date-picker label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.date-picker input {
+  padding: 10px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.date-picker input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* 몇박 몇일 */
+.trip-duration {
+  padding: 12px 20px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.duration-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Day별 일정 */
+.schedule-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.day-tabs {
+  display: flex;
+  padding: 10px 20px;
+  gap: 8px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.day-tab {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.day-tab:hover {
+  background: #e0e0e0;
+}
+
+.day-tab.active {
+  background: #667eea;
+  color: white;
+}
+
+.day-schedule {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.day-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.day-date {
+  font-size: 14px;
+  color: #888;
+}
+
+.schedule-list {
+  flex: 1;
+  padding: 15px 20px;
+  overflow-y: auto;
+  min-height: 150px;
+}
+
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: grab;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.schedule-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.schedule-item:active {
+  cursor: grabbing;
+}
+
+.item-order {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.remove-item-btn {
+  padding: 6px 10px;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.remove-item-btn:hover {
+  background: #ee5a5a;
+}
+
+.empty-schedule {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+  background: white;
+  border-radius: 10px;
+  border: 2px dashed #ddd;
+}
+
+.empty-schedule p {
+  margin: 0;
+  font-size: 15px;
+}
+
+.empty-schedule .hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* 액션 버튼 */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  padding: 15px 20px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-reset, .btn-save {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reset {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.btn-reset:hover {
+  background: #e0e0e0;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-save:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* 오버레이 */
+.panel-overlay {
+  display: none;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .trip-toggle-btn {
+    right: 15px;
+    padding: 10px 14px;
+    font-size: 16px;
+  }
+
+  .trip-toggle-btn.open {
+    right: 15px;
+    top: 15px;
+    transform: none;
+  }
+
+  .toggle-label {
+    display: none;
+  }
+
+  .trip-planner-panel {
+    width: 100%;
+    right: -100%;
+  }
+
+  .panel-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+}
+
+/* 드래그 중 스타일 */
+.schedule-item.dragging {
+  opacity: 0.5;
+  transform: scale(1.02);
+}
+
+/* 드래그 오버 영역 강조 */
+.schedule-list.drag-over {
+  background: rgba(102, 126, 234, 0.1);
+  border: 2px dashed #667eea;
+  border-radius: 10px;
+}

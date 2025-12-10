@@ -94,6 +94,22 @@
   width: 100%;
 }
 
+/* 드래그 힌트 */
+.drag-hint {
+  text-align: center;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.drag-hint span {
+  margin-right: 8px;
+}
+
 /* ===== 상태 메시지 ===== */
 .region-loading,
 .region-error,
