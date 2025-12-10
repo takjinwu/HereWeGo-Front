@@ -26,6 +26,20 @@ const attractionService = {
     }
   },
 
+  // 해시태그 기반 여행지 추천
+  searchByHashtags: async (hashtags) => {
+    try {
+      // hashtags는 배열로 받아서 콤마로 구분된 문자열로 변환
+      const hashtagString = Array.isArray(hashtags) ? hashtags.join(',') : hashtags;
+      const response = await api.get('/api/v1/tour/search-tags', {
+        params: { hashtags: hashtagString }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
   // 축제 검색
   searchFestival: async () => {
     try {

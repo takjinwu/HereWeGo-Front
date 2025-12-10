@@ -13,6 +13,7 @@ import ProfileEditPage from './pages/ProfileEditPage';
 import ReviewPage from './pages/ReviewPage';
 import ReviewDetailPage from './pages/ReviewDetailPage';
 import ReviewFormPage from './pages/ReviewFormPage';
+import RecommendPage from './pages/RecommendPage';
 import AdminPage from './pages/AdminPage';
 
 function App() {
@@ -46,10 +47,12 @@ function App() {
         <Route path="/review/new" element={<ReviewFormPage />} />
         <Route path="/review/:reviewId" element={<ReviewDetailPage />} />
         <Route path="/review/:reviewId/edit" element={<ReviewFormPage />} />
-        <Route path="/profile/edit" element={<ProfileEditPage />} />
-        <Route path="/admin" element={<AdminPage />} />
         
-      </Routes>
+        {/* 맞춤 추천 라우트 */}
+        <Route path="/recommend" element={<RecommendPage />} />
+        
+        <Route path="/profile/edit" element={<ProfileEditPage />} />
+        <Route path="/admin" element={<AdminPage />} />      </Routes>
     </BrowserRouter>
   );
 }

@@ -1,60 +1,61 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import Layout from '../components/Layout/Layout';
 import tourService from '../services/tourService';
+import attractionService from '../services/attractionService';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
   const navigate = useNavigate(); 
   
-  const [spots, setSpots] = useState([]); 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [spots, setSpots] = useState([]); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchQuery, setSearchQuery] = useState(''); 
   const [searchResults, setSearchResults] = useState([]); 
-  const [searchError, setSearchError] = useState(null);
+  const [searchError, setSearchError] = useState(null);
   const [featured, setFeatured] = useState(null); // 랜덤 추천 항목
+  const [recommendations, setRecommendations] = useState([]); // 해시태그 기반 추천
 
-  const token = localStorage.getItem('authToken'); 
-  const isLoggedIn = !!token;
+  const token = localStorage.getItem('authToken'); 
+  const isLoggedIn = !!token;
 
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-        setLoading(true);
-        setError(null);
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+        setLoading(true);
+        setError(null);
 
-        const defaultRegion = "서울"; 
+        if (!isLoggedIn) {
+            setError('추천 정보는 로그인 후 확인 가능합니다.');
+            setLoading(false);
+            return;
+        }
 
-        if (!isLoggedIn) {
-            setError('추천 정보는 로그인 후 확인 가능합니다.');
-            setLoading(false);
-            return;
-        }
+      try {
+        // 기본 해시태그로 추천 여행지 가져오기
+        const defaultHashtags = ['자연경관', '힐링여행', '숨은명소'];
+        const data = await attractionService.searchByHashtags(defaultHashtags);
+        
+        setRecommendations(Array.isArray(data) ? data : []);
+        setSpots(Array.isArray(data) ? data : []);
+        setError(null);
 
-      try {
-        const data = await tourService.getSpotsByRegion(defaultRegion); 
-        
-        setSpots(data.list || data); 
-        setError(null);
+      } catch (err) {
+        const status = err.response?.status;
+        if (status === 403) {
+            setError('세션이 만료되었습니다. 다시 로그인해주세요.');
+        } else {
+            setError(`데이터 로드 실패 (오류 코드: ${status || '네트워크 오류'})`);
+        }
+        console.error('API 호출 실패:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      } catch (err) {
-        const status = err.response?.status;
-        if (status === 403) {
-            setError('세션이 만료되었습니다. 다시 로그인해주세요.');
-        } else {
-            setError(`데이터 로드 실패 (오류 코드: ${status || '네트워크 오류'})`);
-        }
-        console.error('API 호출 실패:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecommendations();
-  }, [isLoggedIn]); 
-
-  const nextSlide = () => {
+    fetchRecommendations();
+  }, [isLoggedIn]);  const nextSlide = () => {
     if (spots.length === 0) return; 
     setCurrentSlide((prev) => (prev + 1) % spots.length);
   };
@@ -120,29 +121,28 @@ try {
   else if (spots.length === 0) {
     carouselContent = <div className="no-data-message">추천 여행지 데이터가 없습니다.</div>;
   } 
-  else {
-    carouselContent = (
-      <div className="carousel-items">
-        {spots.map((item, index) => (
-          <div 
-            key={item.contentId || index} 
-            className={`carousel-item ${index === currentSlide ? 'active' : ''}`}
-          >
-            <img 
-              src={item.firstimage || item.image || '기본_이미지_URL'} 
-              alt={item.title || item.name} 
-              className="carousel-image"
-            />
-            <div className="carousel-info">
-              <p className="carousel-name">{item.title || item.name}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return (
+  else {
+    const currentItem = spots[currentSlide];
+    carouselContent = (
+      <div className="carousel-single-item" onClick={() => navigate(`/detail/${currentItem.contentId}`)}>
+        <img 
+          src={currentItem.firstImage || currentItem.firstimage || currentItem.image || 'https://via.placeholder.com/600x400?text=No+Image'} 
+          alt={currentItem.title || currentItem.name} 
+          className="carousel-image"
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/600x400?text=No+Image';
+          }}
+        />
+        <div className="carousel-info">
+          <h3 className="carousel-name">{currentItem.title || currentItem.name}</h3>
+          {currentItem.address && <p className="carousel-address">{currentItem.address}</p>}
+        </div>
+        <div className="carousel-counter">
+          {currentSlide + 1} / {spots.length}
+        </div>
+      </div>
+    );
+  }  return (
     <Layout>
       <div className="home-container">
         <section className="main-banner">
@@ -195,19 +195,22 @@ try {
           </div>
         </section>
 
-        <section className="category-section">
-          <div className="category-buttons">
-            <Link to="/region" className="category-button region-btn">
-              지역별
-            </Link>
-            <Link to="/theme" className="category-button theme-btn">
-              테마별
-            </Link>
-          </div>
-        </section>
-      </div>
-    </Layout>
-  );
+        <section className="category-section">
+          <div className="category-buttons">
+            <Link to="/region" className="category-button region-btn">
+              지역별
+            </Link>
+            <Link to="/theme" className="category-button theme-btn">
+              테마별
+            </Link>
+            <Link to="/recommend" className="category-button recommend-btn">
+              맞춤 추천
+            </Link>
+          </div>
+        </section>
+      </div>
+    </Layout>
+  );
 };
 
 export default HomePage;
