@@ -143,10 +143,34 @@ const ReviewDetailPage = () => {
   };
 
   const handleEditReview = () => {
+    // 작성자 확인
+    if (!currentUser) {
+      alert('로그인이 필요합니다.');
+      navigate('/login', { state: { from: { pathname: `/review/${reviewId}` } } });
+      return;
+    }
+
+    if (!isAuthor) {
+      alert('본인이 작성한 리뷰만 수정할 수 있습니다.');
+      return;
+    }
+
     navigate(`/review/${reviewId}/edit`);
   };
 
   const handleDeleteReview = async () => {
+    // 작성자 확인
+    if (!currentUser) {
+      alert('로그인이 필요합니다.');
+      navigate('/login', { state: { from: { pathname: `/review/${reviewId}` } } });
+      return;
+    }
+
+    if (!isAuthor) {
+      alert('본인이 작성한 리뷰만 삭제할 수 있습니다.');
+      return;
+    }
+
     if (!window.confirm('리뷰를 삭제하시겠습니까?')) {
       return;
     }
@@ -157,7 +181,13 @@ const ReviewDetailPage = () => {
       navigate('/review');
     } catch (err) {
       console.error('Error deleting review:', err);
-      alert('리뷰 삭제 중 오류가 발생했습니다.');
+      
+      // 403 에러 처리
+      if (err.response?.status === 403) {
+        alert('리뷰를 삭제할 권한이 없습니다.');
+      } else {
+        alert('리뷰 삭제 중 오류가 발생했습니다.');
+      }
     }
   };
 
