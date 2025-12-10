@@ -26,6 +26,16 @@ const attractionService = {
     }
   },
 
+  // 축제 검색
+  searchFestival: async () => {
+    try {
+      const response = await api.get('/api/v1/festival/search');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
   // 투어 상세 정보 조회
   getTourDetail: async (tourId) => {
     try {

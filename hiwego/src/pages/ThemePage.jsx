@@ -9,11 +9,11 @@ import '../styles/ThemePage.css';
 const THEMES = [
   { name: '캠핑', emoji: '⛺', keyword: '캠핑' },
   { name: '역사', emoji: '🏯', keyword: '역사' },
-  { name: '쇼핑', emoji: '🛍️', keyword: '쇼핑' },
-  { name: '축제', emoji: '🎉', keyword: '축제' },
+  { name: '쇼핑', emoji: '🛍️', keyword: '백화점' },
+  { name: '축제', emoji: '🎉', keyword: 'festival' },
   { name: '음식', emoji: '🍜', keyword: '맛집' },
   { name: '체험', emoji: '🎨', keyword: '체험' },
-  { name: '겨울', emoji: '⛄', keyword: '스키' },
+  { name: '겨울', emoji: '⛄', keyword: ['겨울', '썰매', '스키장'] },
 ];
 
 const ThemePage = () => {
@@ -33,23 +33,61 @@ const ThemePage = () => {
           
           // 선택된 테마의 키워드 찾기
           const theme = THEMES.find(t => t.name === selectedTheme);
-          const keyword = theme?.keyword || selectedTheme;
+          let keywords = theme?.keyword || selectedTheme;
           
-          // API: GET /api/v1/tour/search/keyword?query=캠핑
-          const data = await attractionService.searchByKeyword(keyword);
-          console.log(`[${selectedTheme}] API 응답:`, data);
-          
-          // 응답 데이터 파싱
-          let attractionList = [];
-          if (Array.isArray(data)) {
-            attractionList = data;
-          } else if (data.items) {
-            attractionList = Array.isArray(data.items) ? data.items : [data.items];
-          } else if (data.response?.body?.items) {
-            attractionList = Array.isArray(data.response.body.items) ? data.response.body.items : [data.response.body.items];
+          // 단일 키워드를 배열로 변환
+          if (!Array.isArray(keywords)) {
+            keywords = [keywords];
           }
           
-          setAttractions(attractionList);
+          let allAttractions = [];
+          
+          // 축제는 별도의 API 엔드포인트 사용
+          if (selectedTheme === '축제') {
+            const data = await attractionService.searchFestival();
+            console.log(`[${selectedTheme}] API 응답:`, data);
+            
+            // 응답 데이터 파싱
+            if (Array.isArray(data)) {
+              allAttractions = data;
+            } else if (data.items) {
+              allAttractions = Array.isArray(data.items) ? data.items : [data.items];
+            } else if (data.response?.body?.items) {
+              allAttractions = Array.isArray(data.response.body.items) ? data.response.body.items : [data.response.body.items];
+            }
+          } else {
+            // 기타 테마는 키워드 검색 사용 (여러 키워드의 경우 모두 검색)
+            for (const keyword of keywords) {
+              const data = await attractionService.searchByKeyword(keyword);
+              console.log(`[${selectedTheme}] "${keyword}" API 응답:`, data);
+              
+              // 응답 데이터 파싱
+              let attractionList = [];
+              if (Array.isArray(data)) {
+                attractionList = data;
+              } else if (data.items) {
+                attractionList = Array.isArray(data.items) ? data.items : [data.items];
+              } else if (data.response?.body?.items) {
+                attractionList = Array.isArray(data.response.body.items) ? data.response.body.items : [data.response.body.items];
+              }
+              
+              allAttractions = [...allAttractions, ...attractionList];
+            }
+            
+            // 중복 제거 (contentid 기준)
+            const uniqueAttractions = [];
+            const seen = new Set();
+            for (const attraction of allAttractions) {
+              const id = attraction.contentid || attraction.id;
+              if (!seen.has(id)) {
+                seen.add(id);
+                uniqueAttractions.push(attraction);
+              }
+            }
+            allAttractions = uniqueAttractions;
+          }
+          
+          setAttractions(allAttractions);
         } catch (err) {
           setError('여행지 정보를 불러올 수 없습니다.');
           setAttractions([]);
