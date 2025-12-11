@@ -117,6 +117,7 @@
 /* 내 여행 섹션 */
 .my-trips-section {
   padding: 15px 20px;
+  margin-top: 20px;
   border-bottom: 1px solid #e0e0e0;
   background: white;
 }
@@ -376,6 +377,18 @@
 
 .schedule-item:active {
   cursor: grabbing;
+}
+
+.schedule-item.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.schedule-item.drag-over {
+  border: 2px dashed #667eea;
+  background: #f0f4ff;
+  transform: translateX(10px);
 }
 
 .item-order {
