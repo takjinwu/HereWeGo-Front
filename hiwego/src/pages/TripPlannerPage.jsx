@@ -243,6 +243,17 @@ const TripPlannerPage = () => {
             <ol className="spot-list">
               {results.map((spot, index) => (
                 <li key={index} className="spot-item">
+                  {/* 이미지 표시 */}
+                  {spot.firstimage && (
+                    <div className="spot-image-wrapper">
+                      <img 
+                        src={spot.firstimage} 
+                        alt={spot.title} 
+                        className="spot-image"
+                      />
+                    </div>
+                  )}
+                  
                   <span className="spot-number">{index + 1}</span>
                   <div className="spot-details">
                     <h3 className="spot-title">{spot.title}</h3> 

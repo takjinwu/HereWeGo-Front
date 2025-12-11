@@ -135,14 +135,7 @@ const DetailPage = () => {
                 dangerouslySetInnerHTML={{ __html: item.homepage }} 
               />
             </div>
-          )}
-          {/* 5. 콘텐츠 유형 (contenttypeid 필드 사용) - 선택 사항 */}
-          {item.contenttypeid && (
-            <div className="detail-info-group">
-              <h3 className="info-label">유형</h3>
-              <p className="info-content">{item.contenttypeid}</p>
-            </div>
-          )}
+          )}  
         </div>
         
         <hr className="divider" />
