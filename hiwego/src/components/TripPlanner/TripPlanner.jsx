@@ -149,28 +149,11 @@ const TripPlanner = () => {
   const handleDragStart = (e, day, index) => {
     setDraggedItem({ day, index });
     e.dataTransfer.effectAllowed = 'move';
-    e.currentTarget.classList.add('dragging');
-  };
-
-  const handleDragEnd = (e) => {
-    e.currentTarget.classList.remove('dragging');
-    setDraggedItem(null);
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleDragEnter = (e, index) => {
-    e.preventDefault();
-    if (draggedItem && draggedItem.index !== index) {
-      e.currentTarget.classList.add('drag-over');
-    }
-  };
-
-  const handleDragLeave = (e) => {
-    e.currentTarget.classList.remove('drag-over');
+    e.dataTransfer.dropEffect = 'copy';
   };
 
   // 날짜 포맷
@@ -342,14 +325,10 @@ const TripPlanner = () => {
                           className="schedule-item"
                           draggable
                           onDragStart={(e) => handleDragStart(e, activeDay, index)}
-                          onDragEnd={handleDragEnd}
                           onDragOver={handleDragOver}
-                          onDragEnter={(e) => handleDragEnter(e, index)}
-                          onDragLeave={handleDragLeave}
                           onDrop={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            e.currentTarget.classList.remove('drag-over');
                             
                             // 외부에서 드래그한 경우 (새 장소 추가)
                             const placeData = e.dataTransfer.getData('application/json');
