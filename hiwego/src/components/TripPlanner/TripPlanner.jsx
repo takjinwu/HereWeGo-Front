@@ -149,11 +149,36 @@ const TripPlanner = () => {
   const handleDragStart = (e, day, index) => {
     setDraggedItem({ day, index });
     e.dataTransfer.effectAllowed = 'move';
+    // 시각적 피드백을 위해 클래스 추가
+    e.currentTarget.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e) => {
+    // 드래그 종료 시 스타일 원복
+    e.currentTarget.style.opacity = '1';
+    setDraggedItem(null);
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
+    // 외부에서 드래그하는 경우와 내부 순서 변경을 구분
+    if (draggedItem) {
+      e.dataTransfer.dropEffect = 'move';
+    } else {
+      e.dataTransfer.dropEffect = 'copy';
+    }
+  };
+
+  const handleItemDragEnter = (e) => {
+    // 드래그 오버 시 시각적 피드백
+    if (draggedItem) {
+      e.currentTarget.style.borderTop = '3px solid #667eea';
+    }
+  };
+
+  const handleItemDragLeave = (e) => {
+    // 드래그 나갈 때 스타일 제거
+    e.currentTarget.style.borderTop = '';
   };
 
   // 날짜 포맷
@@ -325,10 +350,14 @@ const TripPlanner = () => {
                           className="schedule-item"
                           draggable
                           onDragStart={(e) => handleDragStart(e, activeDay, index)}
+                          onDragEnd={handleDragEnd}
                           onDragOver={handleDragOver}
+                          onDragEnter={handleItemDragEnter}
+                          onDragLeave={handleItemDragLeave}
                           onDrop={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
+                            e.currentTarget.style.borderTop = '';
                             
                             // 외부에서 드래그한 경우 (새 장소 추가)
                             const placeData = e.dataTransfer.getData('application/json');
@@ -340,7 +369,7 @@ const TripPlanner = () => {
                                 console.error('드래그 데이터 파싱 실패:', error);
                               }
                             } 
-                            // 내부에서 순서 변경
+                            // 내부에서 순서 변경 (같은 Day 내에서만)
                             else if (draggedItem && draggedItem.day === activeDay && draggedItem.index !== index) {
                               reorderPlaceInDay(activeDay, draggedItem.index, index);
                             }
