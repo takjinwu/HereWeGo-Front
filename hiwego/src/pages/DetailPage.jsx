@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
 import KakaoMap from '../components/KakaoMap/KakaoMap';
 import tourService from '../services/tourService';
+import { addFavorite, removeFavorite, isFavorited } from '../utils/favorites';
 import '../styles/DetailPage.css';
 
 const DetailPage = () => {
@@ -13,6 +14,7 @@ const DetailPage = () => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFav, setIsFav] = useState(false);
 
 
   const handleCopyAddress = async (text) => {
@@ -20,6 +22,24 @@ const DetailPage = () => {
   
       await navigator.clipboard.writeText(text);
       alert('주소가 복사되었습니다! 📋');
+  };
+
+  const handleFavoriteToggle = () => {
+    if (!item || !item.title) return;
+
+    if (isFavorited(item.title)) {
+      // 즐겨찾기 제거
+      removeFavorite(item.title);
+      setIsFav(false);
+      alert('즐겨찾기가 해제되었습니다. ⭐');
+    } else {
+      // 즐겨찾기 추가
+      const success = addFavorite(item);
+      if (success) {
+        setIsFav(true);
+        alert('즐겨찾기에 추가되었습니다! ⭐');
+      }
+    }
   };
 
   useEffect(() => {
@@ -54,7 +74,10 @@ const DetailPage = () => {
 
         if (targetItem) {
           console.log("화면에 뿌릴 최종 데이터:", targetItem);
-          setItem(targetItem); 
+          console.log("📌 targetItem의 모든 필드:", Object.keys(targetItem));
+          setItem(targetItem);
+          // 즐겨찾기 상태 확인
+          setIsFav(isFavorited(targetItem.title));
         } else {
           console.error("데이터 구조를 찾을 수 없음:", data);
           // 데이터가 없어도 에러 띄우지 않고 빈 화면 방지
@@ -105,7 +128,16 @@ const DetailPage = () => {
         )}
 
         <div className="detail-header">
-          <h1 className="detail-title">{item.title}</h1>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h1 className="detail-title">{item.title}</h1>
+            <button 
+              className={`favorite-btn ${isFav ? 'active' : ''}`}
+              onClick={handleFavoriteToggle}
+              title={isFav ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+            >
+              {isFav ? '⭐' : '☆'} 즐겨찾기
+            </button>
+          </div>
           
           <div className="detail-info-group">
             <h3 className="info-label">주소</h3>
@@ -135,14 +167,7 @@ const DetailPage = () => {
                 dangerouslySetInnerHTML={{ __html: item.homepage }} 
               />
             </div>
-          )}
-          {/* 5. 콘텐츠 유형 (contenttypeid 필드 사용) - 선택 사항 */}
-          {item.contenttypeid && (
-            <div className="detail-info-group">
-              <h3 className="info-label">유형</h3>
-              <p className="info-content">{item.contenttypeid}</p>
-            </div>
-          )}
+          )}  
         </div>
         
         <hr className="divider" />

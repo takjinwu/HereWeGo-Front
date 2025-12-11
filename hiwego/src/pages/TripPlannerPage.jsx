@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout/Layout';
+import { useNavigate } from 'react-router-dom';
 import KakaoMap from '../components/KakaoMap/KakaoMap';
 import tourService from '../services/tourService';
 import '../styles/TripPlannerPage.css';
@@ -158,6 +159,18 @@ const TripPlannerPage = () => {
   const currentRegionNamesDisplay = selectedRegionNames
     .filter(name => name.length > 0);
 
+  const navigate = useNavigate();
+
+  const handleGoToDetail = (spot) => {
+    const id = spot.contentId || spot.id || spot.contentid;
+    if (id) {
+      navigate(`/detail/${id}`);
+    } else {
+      // fallback: 안내 메시지
+      alert('해당 여행지는 상세 정보가 없습니다.');
+    }
+  };
+
 
   return (
     <Layout>
@@ -243,9 +256,22 @@ const TripPlannerPage = () => {
             <ol className="spot-list">
               {results.map((spot, index) => (
                 <li key={index} className="spot-item">
+                  {/* 이미지 표시 */}
+                  {spot.firstimage && (
+                    <div className="spot-image-wrapper">
+                      <img 
+                        src={spot.firstimage} 
+                        alt={spot.title} 
+                        className="spot-image"
+                      />
+                    </div>
+                  )}
+                  
                   <span className="spot-number">{index + 1}</span>
                   <div className="spot-details">
-                    <h3 className="spot-title">{spot.title}</h3> 
+                    <h3 className="spot-title">
+                      <button className="spot-link" onClick={() => handleGoToDetail(spot)}>{spot.title}</button>
+                    </h3>
                     <p className="spot-addr">{spot.addr1 || spot.address}</p>
                     {/* 선택된 지역 이름을 표시 (지역당 1개만 가져오므로 순서대로 매핑) */}
                     <p className="spot-city">[{currentRegionNamesDisplay[index] || '지역 정보 없음'}]</p> 
